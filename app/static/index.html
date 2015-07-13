@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tab View App template</title>
+<!--
+    This template can be used for simple tab view application that has tabs at the bottom to switch views, for applications like Phone app, Facebook App or Instagram app.
+--> 
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0;" />
+    
+    <link rel="stylesheet" type="text/css" href="appframework/af.ui.css" />
+    <link rel="stylesheet" type="text/css" href="appframework/icons.css" />
+    <script type="text/javascript" charset="utf-8" src="appframework/appframework.ui.min.js"></script>
+
+    
+    <script>
+         var onDeviceReady=function(){                             // called when Cordova is ready
+            if( window.Cordova && navigator.splashscreen ) {     // Cordova API detected
+                $.ui.launch(); 
+                navigator.splashscreen.hide() ;                 // hide splash screen
+             }
+         } ;
+         document.addEventListener("deviceready", onDeviceReady, false) ;
+    </script>
+    
+    <script>   
+        $.ui.autoLaunch = false; 
+        $.ui.animateHeaders = false;
+                
+        $(document).ready(function(){
+            $.ui.launch();
+        });
+    </script>    
+</head>
+<body> 
+<div id="afui">
+    
+    <div id="content" style=""> 
+        
+    <!--Tab View Pages-->
+<!--    page index    -->
+        <div class="panel" title="Home" id="page1" data-tab="tab1" selected="true">
+            <header>
+                <h1>TeacherNearby</h1>
+            </header>
+            <div id="searchinput" style="width:100%;margin-top:5px;">
+            	<div id="keyword" style="width:100%;margin:0 auto;">
+            		<input type="search" placeholder="search" style="float:left;width:90%;margin-right:1%">
+            		<a class="button" style="margin-top:0;">搜索</a>
+            	</div>
+            	<div id="filter" style="width:100%">
+            			<div class="button-grouped flex" style="width:95%;margin:0 auto;">
+					    	<a class="button">距离</a>
+					    	<a class="button">价格</a>
+					    	<a class="button">性别</a>
+					  	</div>
+            	</div>            	
+            </div>
+            <div id="map" style="background-color:#0AA9DC;display: none;">
+            	map
+            </div>
+            <div id="list" style="margin-top:1%;">
+            	<ul class="list">
+				    <li>No Chevron</li>
+				    <li>Chevron</li>
+				   	<li>No Chevron</li>
+				    <li>Chevron</li>
+				    <li>No Chevron</li>
+				    <li>Chevron</li>
+			  	</ul>
+            </div>
+        </div>
+        
+ <!--    page favorites    -->       
+        <div class="panel" title="Favorites" id="page2" data-tab="tab2">
+            <header>
+                <h1>Favorites</h1>
+            </header>
+            <p>This is view for second Tab</p>
+        </div>
+        
+<!--    page profile    -->
+        <div class="panel" title="Profile" id="page3" data-tab="tab4">
+            <header>
+                <h1>Profile</h1>
+            </header>
+            <p>This is view for fourth Tab</p>
+        </div>
+        
+    </div>
+    
+    <!--Footer with Tabs or Navigation bar -->
+    <div id="navbar">
+        <a href="#page1" id='tab1' class="icon home" data-transition="none">Home</a>
+        <a href="#page2" id='tab2' class="icon heart" data-transition="none">Favorites</a>
+        <a href="#page3" id='tab3' class="icon user" data-transition="none">Profile</a>
+    </div>
+
+</div>
+</body>
+</html>    

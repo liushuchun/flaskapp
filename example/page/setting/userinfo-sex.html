@@ -1,0 +1,56 @@
+﻿<link rel="stylesheet" href="../../css/mui.min.css">
+<link rel="stylesheet" href="../../css/style.css">
+<style>
+	.mui-input-row { 
+		background: #fff;
+	}
+	body {
+		background-color: #efeff4;
+	}
+</style>
+<header class="mui-bar mui-bar-nav">
+	<a id="close" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<a class="mui-pull-right"><span class="mui-btn mui-btn-success mui-btn-outlined" id="save-post">提交</span></a>
+	<h1 id="title" class="mui-title">修改性别</h1>
+</header>
+<div class="mui-content">
+	<div class="body-title">
+		请选择
+	</div>
+	<form class="mui-input-group">
+		<div class="mui-input-row mui-radio mui-left">
+			<label>男</label>
+			<input name="radio1" type="radio" value="1">
+		</div>
+		<div class="mui-input-row mui-radio mui-left">
+			<label>女</label>
+			<input name="radio1" type="radio" value="0">
+		</div>
+	</form>
+</div>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/zepto.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/template.js"></script>
+<script type="text/javascript">
+	var mainWV, selfWV;
+	mui.plusReady(function() {
+		mainWV = plus.webview.currentWebview().opener();
+		selfWV = plus.webview.currentWebview();
+		mui('header').on('tap', '#save-post', function() {
+			var sex = document.querySelector('input[type=radio]:checked').value;
+			user.updateSex(sex, function(rs) {
+				if (!rs.status) {
+					alert(rs.message);
+				} else {
+					mui.fire(mainWV, 'loadInfo');
+					selfWV.hide(animationOut);
+				}
+			});
+		});
+		//关闭
+		mui('body').on('tap', '#close', function() {
+			selfWV.hide(animationOut);
+		});
+	});
+</script>

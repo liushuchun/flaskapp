@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../../js/mui.min.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+
+	</head>
+
+	<body>
+		<header class=" mui-bar-nav">
+			<span class="mui-icon mui-pull-left ucentet-btn">
+				<img class="header-avatar" src="../images/avatar.jpg">
+			</span>
+			<h1 class="mui-title">发现2</h1>
+		</header>
+	</body>
+	<script>
+		mui.plusReady(function() {
+
+			var main = plus.webview.currentWebview().opener();
+			//触发点击头像
+			mui('header').on('tap', '.ucentet-btn', function(e) {
+				mui.fire(main,"showmenu");
+			});
+		});
+	</script>
+
+</html>

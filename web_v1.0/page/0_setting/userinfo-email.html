@@ -1,0 +1,67 @@
+﻿<link rel="stylesheet" href="../../css/mui.min.css">
+<link rel="stylesheet" href="../../css/style.css">
+<style>
+	.mui-input-row {
+		border-bottom: solid 1px #eee;
+		background: #fff;
+	}
+	body {
+		background-color: #efeff4;
+		line-height: 25px;
+	}
+	h5 {
+		width: 90%;
+		margin: 10px 20px;
+		color: #999;
+	}
+</style>
+<header class="mui-bar mui-bar-nav">
+	<a id="close" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<a class="mui-pull-right"><span class="mui-btn mui-btn-success mui-btn-outlined" id="save-post">提交</span></a>
+	<h1 id="title" class="mui-title">修改邮箱</h1>
+</header>
+<div class="mui-content">
+	<div class="body-title">
+		请输入
+	</div>
+	<div class="mui-input-row">
+		<label>密码：</label>
+		<input type="password" id="password" class="mui-input-clear input" placeholder="输入账号密码">
+	</div>
+
+	<div class="mui-input-row">
+		<label>邮箱：</label>
+		<input type="email" id="email" class="mui-input-clear input" placeholder="输入新邮箱">
+	</div>
+	<h5>系统会给新邮箱发一封确认信</h5>
+</div>
+
+
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/zepto.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/template.js"></script>
+<script type="text/javascript">
+	var mainWV, selfWV;
+	mui.plusReady(function() {
+		mainWV = plus.webview.currentWebview().opener();
+		selfWV = plus.webview.currentWebview();
+		mui('header').on('tap', '#save-post', function() {
+			var email = document.querySelector('#email').value;
+			var password = document.querySelector('#password').value;
+			user.updateEmail(email, password, function(rs) {
+				if (!rs.status) {
+					alert(rs.message);
+					
+				} else {
+					document.querySelector('.mui-pull-right').innerHTML = " ";
+					document.querySelector('.mui-content').innerHTML = '<h5><b>去邮箱验证后方可修改成功!</b></h5><h5><p>请到邮箱<span style="color:red">'+email+'</span>打开验证链接</p><p>（长时间没收到可以到垃圾邮件看看）</p></h5>';
+				}
+			});
+		});
+		//关闭
+		mui('body').on('tap', '#close', function() {
+			selfWV.hide(animationOut);
+		});
+	});
+</script>

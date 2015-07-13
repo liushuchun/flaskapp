@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>用户登录</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			body {
+				background: #f7f7f7;
+			}
+			.logo {
+				text-align: center;
+				margin: 10px auto;
+			}
+			.logo img {
+				height: 80px;
+			}
+			.input {
+				padding: 5px;
+			}
+			.mui-card {
+				padding: 20px 20px 50px 10px;
+			}
+			.mui-btn-block {
+				padding: 10px;
+				margin: 20px auto 40px auto;
+				clear: both;
+				overflow: hidden;
+			}
+			.send-dx {
+				color: orangered;
+			}
+			input {
+				color: #222222;
+			}
+			.red {
+				color: red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-close mui-pull-left"></a>
+			<a class="mui-pull-right"><span class="mui-btn mui-btn-green mui-btn-outlined register-link">注册</span></a>
+			<h1 class="mui-title">登录</h1>
+		</header>
+		<div class="mui-content">
+			<div id="login-bar" class="mui-control-content mui-active">
+
+				<div class="logo">
+					<img src="../../images/logo.png">
+				</div>
+
+				<div class=" mui-card">
+					<form class="mui-input-group mui-table-view">
+						<div class="mui-input-row">
+							<label>账号</label>
+							<input type="text" class="input" id="login-username" placeholder="手机号/账号/Email">
+						</div>
+						<div class="mui-input-row">
+							<label>密码</label>
+							<input type="password" id="login-password" class="mui-input-clear input" placeholder="输入密码">
+						</div>
+						<div class="mui-button-row">
+							<button type="button" class="mui-btn mui-btn-positive mui-btn-block login-btn" id="login-post">登录</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div id="register-bar" class="mui-control-content">
+				<div class="logo">
+					<img src="../../images/logo.png">
+				</div>
+				<h5 class="body-title">输入你的手机 (1/2)</h5>
+				<div class=" mui-card" style="margin: auto 3px;">
+					<form class="mui-input-group mui-table-view">
+						<div id="register-step1" class="">
+
+							<div class="mui-input-row">
+								<table width="100%" border="0">
+									<tr>
+										<td width="85%">
+											<label>手机号</label>
+											<input type="number" class="mui-input-clear input" id="mobile" placeholder="11位手机号码">
+										</td>
+										<td align="right" id="mobileHtml">&nbsp;</td>
+									</tr>
+								</table>
+							</div>
+							<div class="mui-input-row">
+								<table width="100%" border="0">
+									<tr>
+										<td width="85%">
+
+											<label>短信码</label>
+											<input type="number" id="dxcode" size="6" placeholder="短信验证码">
+
+										</td>
+										<td align="right"> <span class="send-dx">发送</span>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div class="mui-button-row">
+								<button type="button" class="mui-btn mui-btn-positive mui-btn-block" id="register-next" onclick="return false;">下一步</button>
+							</div>
+
+						</div>
+						<div id="register-step2" class="mui-hidden">
+							<div class="mui-input-row">
+								<label>账号<span class="red">*</span>
+								</label>
+								<input type="text" value="" id="username" class="input" placeholder="取个漂亮的名字吧">
+							</div>
+							<div class="mui-input-row">
+								<label>密码<span class="red">*</span>
+								</label>
+								<input type="password" id="password" class="mui-input-clear input" value="" placeholder="密码必须6位以上">
+							</div>
+							<div class="mui-input-row">
+								<label>重复<span class="red">*</span>
+								</label>
+								<input type="password" id="repassword" class="mui-input-clear input" placeholder="重复密码">
+							</div>
+							<div class="mui-input-row">
+								<label>QQ</label>
+								<input type="number" id="qq" class="mui-input-clear input" placeholder="输入QQ号码">
+							</div>
+							<div class="mui-input-row">
+								<label>性别</label>
+							</div>
+							<div class="mui-input-row mui-radio mui-left">
+								<label style=" color: #666;">男</label>
+								<input name="radio1" type="radio" value="1">
+							</div>
+							<div class="mui-input-row mui-radio mui-left">
+								<label style="color: #666;">女</label>
+								<input name="radio1" type="radio" value="0">
+							</div>
+							<div class="mui-input-row">
+								<label>所在地</label>
+							</div>
+							<div class="mui-input-row  mui-left">
+								<select id="cmbProvince" class="input" style="padding-left: 20px; color: #666;" name="province"></select>
+							</div>
+							<div class="mui-input-row  mui-left">
+								<select id="cmbCity" class="input" style="padding-left: 20px;color: #666;" name="city"></select>
+							</div>
+							<div class="mui-input-row  mui-left">
+								<select id="cmbArea" class="input" style="padding-left: 20px;color: #666;" name="area"></select>
+							</div>
+							<div class="mui-button-row">
+								<button type="button" class="mui-btn mui-btn-positive mui-btn-block" id="register-btn" onclick="return false;">注册</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<p class="yhxy" style="text-align: center; padding: 20px;">用户协议</p>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/addr.js"></script>
+		<script src="../../js/zepto.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script>
+			 //获得侧滑主窗口webview对象
+			var mainWV, selfWV, sendLock = false;
+			sendObj = document.querySelector('.send-dx');
+			mui.plusReady(function() {
+				addressInit('cmbProvince', 'cmbCity', 'cmbArea', '', '', '');
+				mainWV = plus.webview.currentWebview().opener();
+				selfWV = plus.webview.currentWebview();
+				mui.init({
+					swipeBack: false
+				});
+				//返回
+				mui.back = function() {
+					selfWV.hide('slide-out-bottom');
+				}
+				mui.fire(mainWV, 'closeMenu');
+				//发送短信
+				mui('body').on('tap', '.send-dx', function() {
+					sendMobile();
+				});
+				//注册按钮
+				mui('header').on('tap', '.register-link', function() {
+					registerPage();
+				});
+				//注册按钮
+				$('body').on('tap', '.yhxy', function() {
+					mui.openWindow({
+						url: '/page/public/yhxy.html'
+					});
+				});
+				//注册下一步按钮
+				mui('#register-step1').on('tap', '#register-next', function() {
+					var code = document.querySelector('#dxcode').value;
+					var mobile = document.querySelector('#mobile').value;
+					if (sendObj.innerHTML == '发送' && !code) {
+						sendMobile();
+						return false;
+					}
+					if (code.length != 6) {
+						alert('输入6位短信码');
+						document.querySelector('#dxcode').focus();
+						return false;
+					} else {
+						user.checkMobile(mobile, code, function(rs) {
+							if (rs.status) {
+								document.querySelector('#register-step1').classList.add('mui-hidden');
+								document.querySelector('#register-step2').classList.remove('mui-hidden');
+								document.querySelector('.body-title').innerHTML = '完善账号信息 (2/2)';
+							} else {
+								alert(rs.message);
+							}
+						});
+					}
+				});
+				//提交注册
+				mui('body').on('tap', '#register-btn', function(data) {
+					var code = document.querySelector('#dxcode').value;
+					var mobile = document.querySelector('#mobile').value;
+					var username = document.querySelector('#username').value;
+					var password = document.querySelector('#password').value;
+					var repassword = document.querySelector('#repassword').value;
+					var p = document.querySelector('#cmbProvince').value;
+					var c = document.querySelector('#cmbCity').value;
+					var a = document.querySelector('#cmbArea').value;
+					var sex = document.querySelector('input[type=radio]:checked') ? document.querySelector('input[type=radio]:checked').value : null;
+					var qq = document.querySelector('#qq').value;
+					var addr = p + ',' + c + ',' + a;
+					addr = addr.replace('--请选择--', '');
+					addr = addr.replace('--', '');
+					if (password && password != repassword) {
+						alert('两次密码不相等');
+						return false;
+					}
+					user.register(username, password, mobile, qq, sex, addr, function(rs) {
+						if (rs.status) {
+							plus.nativeUI.toast('注册成功,请登录');
+							loginPage();
+						} else {
+							alert(rs.message);
+						}
+					})
+				});
+				//登录按钮
+				mui('header').on('tap', '.login-link', function() {
+					loginPage()
+				});
+				//提交登录
+				mui('body').on('tap', '#login-post', function(data) {
+					var username = $("#login-username").val();
+					var password = $("#login-password").val();
+					user.login(username, password, function(rs) {
+						if (rs.status) {
+							var uid = rs.data.uid;
+							user.deleteCache(uid); //清空缓存 
+							store.delete('uid');
+							store.delete('utoken');
+							if (!uid) {
+								alert('用户不存在');
+								return;
+							}
+							//设置登陆信息,一年有效期
+							store.set('uid', uid, 3600 * 24 * 365);
+							store.set('utoken', rs.data.utoken, 3600 * 24 * 365);
+							//切换页面
+							selfWV.close('slide-out-bottom');
+							mui.fire(mainWV, "loadHeader");
+							mui.fire(mainWV, 'loadFooter');
+							return true;
+						} else {
+							alert(rs.message);
+							return false;
+						}
+					});
+				});
+			});
+			 //发送手机验证码
+			function sendMobile() {
+				var mobile = document.querySelector('#mobile').value;
+				if (sendObj.innerHTML != '发送') {
+					plus.nativeUI.toast('短信已发送,30秒后再试');
+					return false;
+				}
+				user.sendMobile(mobile, function(rs) {
+					if (rs.status) {
+						plus.nativeUI.toast('验证码已经发送到手机,请查阅');
+						countdown(30);
+						document.querySelector('#dxcode').focus();
+					} else {
+						document.querySelector('#mobile').focus();
+						alert(rs.message);
+					}
+				})
+			}
+
+			function countdown(s) {
+				s--;
+				if (s == 0) {
+					sendObj.innerHTML = '发送';
+				} else {
+					sendObj.innerHTML = s + '秒';
+					setTimeout(function() {
+						countdown(s)
+					}, 1000)
+				}
+			}
+
+			function loginPage() {
+				document.getElementById('login-bar').classList.add('mui-active');
+				document.getElementById('register-bar').classList.remove('mui-active');
+				document.querySelector('.mui-title').innerText = "登录";
+				setTimeout(function() {
+					var _this = document.querySelector('.login-link');
+					_this.classList.remove('login-link');
+					_this.classList.add('register-link');
+					_this.innerText = '注册';
+				}, 1);
+			}
+
+			function registerPage() {
+				//切换注册/登录按钮
+				document.querySelector('#login-bar').classList.remove('mui-active');
+				document.querySelector('#register-bar').classList.add('mui-active');
+				document.querySelector('.mui-title').innerText = "注册";
+				document.querySelector('.body-title').innerHTML = '输入你的手机 (1/2)';
+				setTimeout(function() {
+					var _this = document.querySelector('.register-link');
+					_this.classList.remove('register-link');
+					_this.classList.add('login-link');
+					_this.innerText = '登录';
+				}, 1);
+				//重置注册界面
+				document.querySelector('#register-step1').classList.remove('mui-hidden');
+				document.querySelector('#register-step2').classList.add('mui-hidden');
+			}
+		</script>
+	</body>
+
+</html>

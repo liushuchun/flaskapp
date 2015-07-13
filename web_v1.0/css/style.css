@@ -1,0 +1,36 @@
+html {background: #f7f7f7;}
+.mui-bar{background:#3D3E3D;color: #fff;}
+.mui-title{color: #fff;}
+.header-avatar {
+	width: 30px;
+	height: 30;
+	border-radius: 50%;
+	margin-top: -2px;
+}
+.mui-backdrop {
+	z-index: 99999;
+}
+.mui-active{color: green;}
+.body-title {padding: 10px 15px 7px;background: #F7F7F7; color: #6d6d72;font-size: 15px; border-bottom: 1px solid #EFEFF4;}
+.mui-slider{background: #F7F7F7;}
+.mui-content{background:none;}
+.ucenter{margin: 20px 0; background:#333;}
+.ucenter-header{ clear: both; overflow: hidden;}
+.ucenter-avatar{text-align: center; width: 40%; float: left;}
+.ucenter-avatar img{border-radius: 50%; width: 60px;height: 60px;}
+.ucenter-right{float: right; width: 60%; text-align: left;}
+.ucenter-text{color: #ccc;margin: 5px auto; }
+.ucenter-menu{margin-top:30px;} 
+.ucenter .mui-table-view-cell{color: #ccc;}
+.ucenter-lv{font-size: 9px;}
+
+.message-time{font-size: 10px;color: #ccc;}
+
+.read-context{margin: 0 10px; line-height: 1.5em;}
+.read-context-bar{font-size: 12px;color: #CCCCCC;}
+.read-context p img{width: 100%;max-width: 600px; margin: 0 auto;}
+
+.mui-pull-left,a,a:active{color: #fff;}
+.mui-content{ margin:0 auto 20px auto;}
+.ccc{color: #ccc;}
+.c333{color: #333333;}

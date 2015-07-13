@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.mui-slider-item img {
+				height: 130px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+			<div id="interest" class="mui-control-content mui-active">
+
+				<div class="interest-title">
+					花卉
+				</div>
+				<ul class="mui-table-view mui-table-view-chevron">
+					<li class="mui-table-view-cell mui-media openLocaPage" data="{url:'../hua/index.html',id:1,title:'花卉大全'}">
+						<a class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../../images/test/huahui.jpg">
+							<div class="mui-media-body">
+								花卉大全
+								<p class='mui-ellipsis'>常见花图片及信息大全</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="mui-control-content" id="friend">
+				<div class="friend-title">
+					我的好友
+				</div>
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="openLocaPage" data="{url:'ajax/friend-view.html',id:1,title:'好友',background:'#efeff4'}">
+							<img class="mui-media-object mui-pull-left" src="../../images/avatar.jpg">
+							<div class="mui-media-body">
+								fengqiao
+								<p class='mui-ellipsis'>能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div id="message" class="mui-control-content">
+
+				<script type="text/html" id="tpl-message">
+					{{if list[0]}}
+					<div class="friend-title">
+						消息列表
+					</div>
+					<ul class="mui-table-view">
+						{{each list as val}}
+						<li class="mui-table-view-cell mui-media openLocaPage" data-type="message" data-id="{{val.id}}" data="{url:'message/read.html?id={{val.id}}',title:'消息',rightclass:'mui-icon-trash',rightdo: 'del-message'}">
+							<span class="mui-icon mui-icon-chatboxes mui-media-object mui-pull-left" style="font-size: 30px; color: #C0C0C0;"></span>
+							<div class="mui-media-body">
+								通知<span class="mui-pull-right message-time">{{val.createtime | formatDate}}</span>
+								<p class='mui-ellipsis'>{{val.title | substr}} {{if val.is_read!=1}}<span class="mui-badge mui-badge-danger mui-pull-right">未读</span>{{/if}}
+								</p>
+							</div>
+						</li>
+						{{/each}}
+					</ul>
+					{{else}}
+					<div class="friend-title">
+						暂无消息
+					</div>
+					{{/if}}
+				</script>
+				<div id="tpl-message-html"></div>
+
+			</div>
+		</div>
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/template.js"></script>
+	<script>
+		template.helper('formatDate', function(datetime) {
+			if (!datetime) {
+				return;
+			}
+			var arr = datetime.split(' ');
+			var d = new Date();
+			var str = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+			if (arr[0] == str) {
+				return '今天 ' + arr[1];
+			} else {
+				return arr[0];
+			}
+		})
+		 template.helper('substr', function(str) {
+			if (str.length > 13) {
+				return str.substr(0, 13) + '..';
+			} else {
+				return str;
+			}
+		})
+		 window.addEventListener('changeBar', function(event) {
+			//获得事件参数
+			var val = event.detail.val;
+			if (val == 'friend') {
+				document.getElementById('friend').classList.add('mui-active');
+				document.getElementById('interest').classList.remove('mui-active');
+				document.getElementById('message').classList.remove('mui-active');
+			} else if (val == 'message') {
+				//消息
+				if (!cache('uid')) {
+					mui.fire(main, 'login');
+					return;
+				}
+				document.getElementById('interest').classList.remove('mui-active');
+				document.getElementById('friend').classList.remove('mui-active');
+				document.getElementById('message').classList.add('mui-active');
+				listNotice();
+				mui.fire(main, 'getNoticeNum');
+			} else {
+				document.getElementById('friend').classList.remove('mui-active');
+				document.getElementById('message').classList.remove('mui-active');
+				document.getElementById('interest').classList.add('mui-active');
+			}
+		});
+		mui.plusReady(function() {
+			main = plus.webview.currentWebview().opener();
+			self = plus.webview.currentWebview();
+			self.show();
+			document.addEventListener("swipeleft", function(e) {
+				mui.fire(main, "swipeleft");
+			});
+			document.addEventListener("swiperight", function(e) {
+				mui.fire(main, "swiperight");
+			});
+			document.addEventListener("tap", function(e) {
+				mui.fire(main, "tap");
+			});
+			mui('body').on('tap', '#testPage', function() {
+				var data = {
+					title: '返回重试',
+					rightclass: 'mui-icon-trash',
+					rightdo: 'del-message'
+				};
+				getPage('hua-index', 'hua/index.html', data);
+			});
+			mui('body').on('tap', '#testPage1', function() {
+				var data = {
+					title: '返回重试',
+					rightclass: 'mui-icon-trash',
+					rightdo: 'del-message'
+				};
+				getPage('body', 'body.html', data);
+			});
+			mui('body').on('tap', '.openLocaPage', function() {
+				var data = this.getAttribute('data');
+				var type = this.getAttribute('data-type');
+				var id = this.getAttribute('data-id');
+				if (type == 'message') {
+					setNoticeRead(id);
+				}
+				data = eval("(" + data + ")");
+				mui.fire(main, "openLocaPage", data);
+			});
+			window.addEventListener('listNotice', function(e) {
+				listNotice();
+			});
+		});
+
+		function setNoticeRead(id) {
+			var url = host + '?m=notice&a=setRead';
+			var uid = cache('uid');
+			var utoken = cache('utoken');
+			$.get(url, {
+				uid: uid,
+				id: id,
+				utoken: utoken
+			}, function(rs) {
+				if (rs.status) {
+					console.log('setNoticeRead:' + rs.message);
+					listNotice();
+					mui.fire(main, 'getNoticeNum');
+				} else {
+					console.log('setNoticeRead:' + rs.message);
+				}
+			})
+		}
+
+		function listNotice() {
+			var url = host + '?m=notice&a=myNotice';
+			var uid = cache('uid');
+			var utoken = cache('utoken');
+			$.get(url, {
+				uid: uid,
+				utoken: utoken
+			}, function(rs) {
+				if (rs.status) {
+					var html = template('tpl-message', rs.data);
+					document.querySelector('#tpl-message-html').innerHTML = html;
+				} else {
+					console.log('listNotice:' + rs.message);
+				}
+			});
+		}
+
+		function hidePage() {
+			main.evalJS('hidePage();');
+		}
+
+		function showPage() {
+			main.evalJS('showPage();');
+		}
+	</script>
+
+</html>

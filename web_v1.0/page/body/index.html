@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			header {
+				background: #000000;
+			}
+			.mui-slider-itemimg {
+				height: 130px;
+			}
+			.mui-active {
+				color: green;
+			}
+			.mui-content {
+				background: #f7f7f7;
+			}
+			.item {
+				margin: 10px 0px 20px 0px;
+				background: #fff;
+				padding-top: 10px;
+				overflow: hidden;
+				border-bottom: solid 1px #EEEEEE;
+				border-top: solid 1px #EFEFF4;
+			}
+			.item .context {
+				font-size: 14px;
+				color: #222;
+				padding: 1.8%;
+				overflow: hidden;
+			}
+			.item .context:active {
+				background: #EEEEEE;
+			}
+			.item .pic {} .item .pic img {
+				float: left;
+				width: 30%;
+				margin: 10px 1.5%;
+			}
+			.item .head {
+				clear: both;
+				overflow: hidden;
+				font-size: 14px;
+				color: #000;
+			}
+			.item .head .usertop {
+				margin-top: 3px;
+			}
+			.item .head .username {
+				color: #000000;
+			}
+			.item .head .mui-pull-right {
+				padding-right: 10px;
+				color: #ccc;
+				font-size: 12px;
+			}
+			.item .head .avatar {
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				float: left;
+				margin: 0 10px 10px 10px;
+			}
+			.item .foot {
+				clear: both;
+				padding: 5px;
+				color: #ccc;
+				text-align: right;
+			}
+			.mui-icon:active {
+				color: #000000;
+			}
+			.mui-slider {
+				background: #fff;
+			}
+			.body-header {
+				padding: 2px 0px 7px 10px;
+				border-bottom: 1px solid #ccc;
+				background: #fff;
+				font-size: 14px;
+				color: #222222;
+			}
+			.body-header-item {
+				margin: auto 15px auto 5px;
+				padding: 10px 10px 5px 10px;
+			}
+			.body-header .line {
+				color: #ccc;
+				margin-right: 10px;
+			}
+			.selected {
+				color: red;
+			}
+			.baike-item img {
+				width: 100%;
+			}
+			.page-btn {
+				text-align: center;
+				padding-top: 10px;
+				padding-bottom: 20px;
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+			<script type="text/html" id="tpl-body">
+
+				<div class="mui-slider">
+					<img width="100%" src="../../images/test/2.jpg">
+				</div>
+				<ul class="mui-table-view mui-table-view-chevron">
+					<li class="mui-table-view-cell mui-media openLocaPage" data="{url:'../question/index.html?type=0',title:'看图识花',rightclass:'mui-icon-plusempty','rightdo':'add',surl:'huahui'}">
+						<a class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../../images/list/shequ_caihua.png" width="100%" />
+							<div class="mui-media-body">
+								看图识花
+								<p class='mui-ellipsis'>不认识的花来这提问</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media openLocaPage" data="{url:'../article/index.html?surl=huahui',title:'养花知识'}">
+						<a class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../../images/list/icon3.png" width="100%" />
+							<div class="mui-media-body">
+								养花知识
+								<p class='mui-ellipsis'>花卉养殖相关知识</p>
+							</div>
+						</a>
+					</li>
+					
+					<li class="mui-table-view-cell mui-media openPage" data="{url:'../public/guestbook.html',title:'建议反馈'}">
+						<a class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../../images/jianyi.png" width="100%" />
+							<div class="mui-media-body">
+								建议反馈
+								<p class='mui-ellipsis'>写下你使用过程中遇到的问题</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+
+			</script>
+			<script type="text/html" id="tpl-blog">
+				{{each list as val i}}
+				<div class="item">
+					<div class="head openLocaPage" data="{url:'/page/blog/show.html?id={{val.id}}',title:'查看内容'}">
+						<img src="{{val.user.avatar}}" class="avatar">
+						<div class="usertop">
+							<div class="mui-pull-left">
+								<span class="mui-badge mui-badge-warning ">{{val.user.lv_name}}</span> <span class="username">{{val.user.username}}</span>
+								<img src="../../images/sex{{val.user.sex}}.png">
+							</div>
+							<div class="mui-pull-right">
+								{{val.createdate}}
+							</div>
+						</div>
+					</div>
+					<div class="context openLocaPage" data="{url:'../blog/show.html?id={{val.id}}',title:'查看内容'}">
+						{{val.intro}} {{if val.photo}}
+						<div class="pic">
+							{{each val.photo as p n}} {{if n
+							<3}} <img src="{{p.photo}}!avatar" /> {{/if}} {{/each}}
+						</div>
+						{{/if}}
+					</div>
+					{{if uid==val.user.uid}}
+					<div class="foot">
+						<span class="mui-icon mui-icon-trash" onclick="delBlog({{val.id}})"></span>
+					</div>
+					{{/if}}
+				</div>
+				{{/each}}
+			</script>
+			<script id="tpl-baike-list" type="text/html">
+				{{if total_num>0}} {{each list as val i}}
+
+				<li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-4 openLocaPage baike-item" data="{url:'../baike/read-context.html?id={{val.id}}',title:'{{val.title}}',rightclass:'mui-icon-redo1','rightdo':'share'}">
+					<img src="{{val.thumb200}}">
+					<p>{{val.title}}</p>
+				</li>
+
+				{{/each}} {{else}}
+				<p class="mui-table-view-cell mui-col-xs-12" align="center">暂无内容</p>
+				{{/if}}
+
+			</script>
+
+			<div id="tpl-blog-html" class="mui-control-content mui-active">
+				<div class="mui-slider">
+					<img width="100%" src="../../images/test/0.jpg">
+				</div>
+				<div class="body-header">
+					<span class="body-header-item selected" id="hot-blog" data="{type:'hot'}">热门</span>
+					<span class="line">|</span>
+					<span class="body-header-item" id="my-blog" data="{type:'my'}">我的</span>
+				</div>
+				<span class="body"></span>
+				<h5 id="hotblog-nextpage-btn" class="page-btn" data-page="">点击加载更多</h5>
+			</div>
+			<div id="tpl-body-html" class="mui-control-content"></div>
+			<div id="tpl-baike-html" class="mui-control-content">
+				<div class="mui-input-row mui-search" style="margin: 10px;">
+					<input type="search" id="baike-search" class="mui-input-clear mmui-content-padded" placeholder="输入花卉名字，点击键盘搜索按钮">
+				</div>
+				<ul class="mui-table-view mui-grid-view mui-grid-12"></ul>
+				<h5 id="baike-nextpage-btn" class="page-btn" data-page="">点击加载更多</h5>
+			</div>
+		</div>
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/template.js"></script>
+	<script>
+		var uid;
+		mui.plusReady(function() {
+			uid = user.uid();
+			mainMV = plus.webview.currentWebview().opener();
+			selfMV = plus.webview.currentWebview();
+			document.addEventListener("swipeleft", function(e) {});
+			document.addEventListener("swiperight", function(e) {});
+			document.addEventListener("tap", function(e) {});
+			document.addEventListener("changeBar", function(e) {
+				window.scrollTo(0, 0);
+				var data = e.detail;
+				if (data.type == 'index') {
+					hotBlog(1);
+					$('.mui-active').removeClass('mui-active');
+					$('#tpl-blog-html').addClass('mui-active');
+				} else if (data.type == 'baike') {
+					listBaike();
+					$('.mui-active').removeClass('mui-active');
+					$('#tpl-baike-html').addClass('mui-active');
+					$('#baike-search').val('');
+				} else if (data.type == 'group') {
+					group(data);
+					$('.mui-active').removeClass('mui-active');
+					$('#tpl-body-html').addClass('mui-active');
+				}
+			});
+			document.addEventListener("myBlog", function(e) {
+				myBlog(1, true);
+			});
+			mui('body').on('tap', '.openLocaPage', function() {
+				var data = this.getAttribute('data');
+				var subWV = plus.webview.getWebviewById('subWV');
+				data = eval("(" + data + ")");
+				mui.fire(subWV, "openWindow", data);
+			});
+			mui('body').on('tap', '.openPage', function() {
+				var data = this.getAttribute('data');
+				data = eval("(" + data + ")");
+				system.open(data.url, 'guestbook');
+			});
+			//百科下一页
+			$('body').on('tap', '#baike-nextpage-btn', function() {
+				var page = $(this).data('page');
+				var html = $(this).html();
+				//防止重复点击
+				if (html == '点击加载更多') {
+					$(this).html('<p style="text-align:center;padding-top:5px;" ><span class="mui-spinner"></span></p>');
+					listBaike(page);
+				}
+			});
+			//博客下一页
+			$('body').on('tap', '#hotblog-nextpage-btn', function() {
+				var page = $(this).data('page');
+				var html = $(this).html();
+				var type = $(this).data('type');
+				//防止重复点击
+				if (html == '点击加载更多') {
+					if (type == 'my') {
+						myBlog(page);
+					} else {
+						hotBlog(page);
+					}
+					$(this).html('<p style="text-align:center;padding-top:5px;" ><span class="mui-spinner"></span></p>');
+				}
+			});
+			//花园菜单切换
+			mui('body').on('tap', '.body-header-item', function() {
+				var data = this.getAttribute('data');
+				data = eval("(" + data + ")");
+				if (data.type == 'my') {
+					myBlog(1);
+				} else {
+					hotBlog(1);
+				}
+			});
+			var data = {}
+			setTimeout(function() {
+				hotBlog(1);
+			}, 300);
+			//百科搜索
+			$('body').on('keydown', '#baike-search', function(e) {
+				var keyword = $(this).val();
+				if (13 == e.keyCode) {
+					listBaike(1, keyword);
+					$(this).blur();
+				}
+			});
+		});
+
+		function group(data) {
+			var html = template('tpl-body', data);
+			document.querySelector('#tpl-body-html').innerHTML = html;
+		}
+
+		function myBlog(page, clear) {
+			var page = page > 0 ? page : 1;
+			blog.my(page, function(data) {
+				data.uid = user.uid();
+				var html = template('tpl-blog', data);
+				if (page > 1) {
+					$('#tpl-blog-html .body').append(html);
+				} else {
+					$('#tpl-blog-html .body').html(html);
+				}
+				if (data.next_page > 0) {
+					$('#hotblog-nextpage-btn').html('点击加载更多').data('page', data.next_page).data('type', 'my').show();
+				} else {
+					$('#hotblog-nextpage-btn').data('page', '').hide();
+				}
+				if (document.querySelector('.selected')) {
+					document.querySelector('.selected').classList.remove('selected');
+					document.querySelector('#my-blog').classList.add('selected');
+				}
+			}, clear);
+		}
+
+		function hotBlog(page) {
+			var page = page > 0 ? page : 1;
+			blog.hot(page, function(data) {
+				data.uid = uid;
+				var html = template('tpl-blog', data);
+				if (page > 1) {
+					$('#tpl-blog-html .body').append(html);
+				} else {
+					$('#tpl-blog-html .body').html(html);
+				}
+				if (data.next_page > 0 && data.next_page <= 10) {
+					$('#hotblog-nextpage-btn').html('点击加载更多').data('page', data.next_page).data('type', 'hot').show();
+				} else {
+					$('#hotblog-nextpage-btn').data('page', '').hide();
+				}
+			});
+			if (document.querySelector('.selected')) {
+				document.querySelector('.selected').classList.remove('selected');
+				document.querySelector('#hot-blog').classList.add('selected');
+			}
+		}
+
+		function listBaike(page, keyword) {
+			var page = page > 0 ? page : 1;
+			if (page == 1) {
+				$('#tpl-baike-html ul').html('');
+			}
+			//显示加载图标
+			setTimeout(function() {
+				if ($('#tpl-baike-html ul').html() == "") {
+					$('#tpl-baike-html ul').html('<p style="text-align:center;padding-top:20px;" ><span class="mui-spinner"></span></p>');
+				}
+			}, 500);
+			baike.list('huahui', keyword, page, function(data) {
+				var html = template('tpl-baike-list', data);
+				//console.log(html)
+				if (page > 1) {
+					$('#tpl-baike-html ul').append(html);
+				} else {
+					$('#tpl-baike-html ul').html(html);
+				}
+				//判断分页，搜索暂不支持分页
+				if (keyword) {
+					$('#baike-nextpage-btn').data('page', '').hide();
+				} else {
+					if (data.next_page > 0) {
+						$('#baike-nextpage-btn').html('点击加载更多').data('page', data.next_page).show();
+					} else {
+						$('#baike-nextpage-btn').data('page', '').hide();
+					}
+				}
+			});
+		}
+
+		function delBlog(id) {
+			var btnArray = [{
+				title: "删除"
+			}];
+			plus.nativeUI.actionSheet({
+				title: "请选择操作",
+				cancel: "取消",
+				buttons: btnArray
+			}, function(e) {
+				var index = e.index;
+				switch (index) {
+					case 0:
+						break;
+					case 1:
+						blog.delete(id, function(rs) {
+							if (rs.status) {
+								setTimeout(function() {
+									plus.nativeUI.toast(rs.message);
+									myBlog(true);
+								}, 100);
+							} else {
+								alert(rs.message);
+							}
+						});
+						break;
+				}
+			});
+		};
+	</script>
+
+</html>

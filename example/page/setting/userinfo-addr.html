@@ -1,0 +1,66 @@
+﻿<link rel="stylesheet" href="../../css/mui.min.css">
+<link rel="stylesheet" href="../../css/style.css">
+<style>
+	body {
+		background-color: #efeff4;
+	}
+	.mui-input-row {
+		padding-left: 20px;
+	}
+</style>
+<header class="mui-bar mui-bar-nav">
+	<a id="close" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<a class="mui-pull-right"><span class="mui-btn mui-btn-success mui-btn-outlined" id="save-post">提交</span></a>
+	<h1 id="title" class="mui-title">修改所在地</h1>
+</header>
+<div class="mui-content">
+	<div class="body-title">
+		请选择
+	</div>
+	<form class="mui-input-group">
+		<div class="mui-input-row  mui-left">
+			<select id="cmbProvince" class="input" name="province"></select>
+		</div>
+		<div class="mui-input-row  mui-left">
+			<select id="cmbCity" class="input" name="city"></select>
+		</div>
+		<div class="mui-input-row  mui-left">
+			<select id="cmbArea" class="input" name="area"></select>
+		</div>
+
+</div>
+<script type="text/javascript" src="../../js/addr.js"></script>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/zepto.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/template.js"></script>
+<script type="text/javascript">
+	var mainWV, selfWV;
+	mui.plusReady(function() {
+		mainWV = plus.webview.currentWebview().opener();
+		selfWV = plus.webview.currentWebview();
+		var location = selfWV.data;
+		var location = location.split(',');
+		addressInit('cmbProvince', 'cmbCity', 'cmbArea', location[0], location[1], location[2]);
+		mui('header').on('tap', '#save-post', function() {
+			var p = document.querySelector('#cmbProvince').value;
+			var c = document.querySelector('#cmbCity').value;
+			var a = document.querySelector('#cmbArea').value;
+			var addr = p + ',' + c + ',' + a;
+			addr = addr.replace('--请选择--', '');
+			addr = addr.replace('--', '');
+			user.updateAddr(addr, function(rs) {
+				if (!rs.status) {
+					alert(rs.message);
+				} else {
+					mui.fire(mainWV, 'loadInfo');
+					selfWV.hide(animationOut);
+				}
+			});
+		});
+		//关闭
+		mui('body').on('tap', '#close', function() {
+			selfWV.hide(animationOut);
+		});
+	});
+</script>

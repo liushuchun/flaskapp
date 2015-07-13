@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="close" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title"></h1>
+		</header>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		var selfWV, mainWV;
+		 //从服务器获取数据
+		 //业务数据获取完毕，并已插入当前页面DOM；
+		 //注意：若为ajax请求，则需将如下代码放在处理完ajax响应数据之后；
+		mui.plusReady(function() {
+			//显示当前页面 
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			contextWV = plus.webview.getWebviewById('question-add-context');
+			if (!contextWV) {
+				contextWV = plus.webview.create('add-context.html', 'question-add-context', {
+					top: '44px'
+				});
+			}
+			selfWV.append(contextWV);
+			
+			window.addEventListener('getContext', function(e) {
+				//回顶部
+				document.querySelector('.mui-title').innerHTML = e.detail.title;
+				mui.fire(contextWV, 'getContext', e.detail);
+				selfWV.show(animationIn); 
+			});
+			//关闭
+			mui('body').on('tap', '#close', function() {
+				document.querySelector('.mui-title').innerHTML = ' ';
+				selfWV.hide(animationOut);
+				mui.fire(contextWV,'clear');
+			});
+		});
+	</script>
+
+</html>

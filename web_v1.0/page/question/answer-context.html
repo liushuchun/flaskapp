@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.mui-slider {
+				min-height: 200px;
+			}
+			.read-context {
+				padding: 10px;
+				text-align: justify;
+			}
+			.context-article img {
+				width: 100%;
+				max-width: 400px;
+				min-height: 100px;
+				height: auto;
+				margin: 5px auto;
+			}
+			.context-article p {
+				color: #242424;
+				text-indent: 2em;
+			}
+			.read-context-bar {
+				margin: 5px auto 10px auto;
+			}
+			h4 {
+				margin: 20px auto;
+			}
+			.user-card {} .user-card-avatar {
+				border-radius: 50%;
+				width: 60px;
+				height: 60px;
+			}
+			.mui-table-view::before {
+				height: 0;
+			}
+			.mui-media {
+				background-color: none;
+				border-bottom: solid 1px #ccc;
+				margin: 10px auto;
+			}
+			.mui-media-body {
+				font-size: 12px;
+			}
+			.qcontext {
+				padding: 20px 10px;
+			}
+			.mui-badge {
+				font-size: 12px;
+			}
+			.username {
+				color: #333;
+				font-size: 14px;
+			}
+			.head {
+				clear: both;
+				overflow: hidden;
+				font-size: 14px;
+				color: #000;
+			}
+			.head .usertop {
+				margin-top: 3px;
+			}
+			.head .username {
+				color: #000000;
+			}
+			.head .mui-pull-right {
+				padding-right: 10px;
+				color: #ccc;
+				font-size: 12px;
+			}
+			.head .avatar {
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				float: left;
+				margin: 0 10px 10px 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content read-context">
+
+			<script type="text/html" id="tpl-answer-context">
+
+				{{if type=="1"}}
+				<p>{{context}}</p>
+				{{/if}} {{each photo as val i}}
+				<p><b>第{{i+1}}幅图</b>
+				</p>
+				<p>
+					<img src="{{static_host+val.src}}!middle">
+				</p>
+				{{/each}}
+			</script>
+			<div id="tpl-answer-context-html"></div>
+
+			<script type="text/html" id="tpl-answer-addbar">
+				<hr>
+				<div id="comment-bar">
+					{{if status}}
+					<h4>我的回答</h4>
+					<p>{{data}}</p>
+					{{else}}
+					<h4>我来回答</h4>
+					<div class="mui-input-row" style="margin: 10px 5px;">
+						<textarea id="answer-context" rows="2" placeholder="输入花卉名称"></textarea>
+					</div>
+
+					<div class="mui-button-row">
+						<button type="button" class="mui-btn mui-btn-positive mui-btn-block" id="answer-post" data-qid="{{id}}">提交答案</button>
+					</div>
+					{{/if}}
+				</div>
+			</script>
+			<div id="tpl-answer-addbar-html"></div>
+
+			<script type="text/html" id="tpl-answer-list">
+				<div class="body-title">大家的回答</div>
+				{{if total_num>0}}
+				<ul class="mui-table-view">
+					{{each list as val i}}
+					<li class="mui-media">
+						<div class="head">
+							<img src="{{val.user.avatar}}" class="avatar">
+							<div class="usertop">
+								<div class="mui-pull-left">
+									<span class="mui-badge mui-badge-warning ">{{val.user.lv_name}}</span> <span class="username">{{val.user.username}}</span>
+									<img src="../../images/sex{{val.user.sex}}.png">
+								</div>
+								<div class="mui-pull-right">
+									{{val.createtime}}
+								</div>
+							</div>
+						</div>
+						<div class="qcontext">
+							{{val.context}}
+						</div>
+					</li>
+					{{/each}}
+				</ul>
+				{{else}}
+				<p align="center">暂无回答</p>
+				{{/if}}
+			</script>
+			<div id="tpl-answer-list-html"></div>
+
+		</div>
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		var selfWV, mainWV;
+		mui.plusReady(function() {
+			//显示当前页面 
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			window.addEventListener('getContext', function(e) {
+				var id = e.detail.id;
+				getContext(id);
+				console.log(document.querySelector('#tpl-answer-context-html').innerHTML)
+			});
+			window.addEventListener('clear', function(e) {
+				document.querySelector('#tpl-answer-context-html').innerHTML = " ";
+				document.querySelector('#tpl-answer-list-html').innerHTML = " ";
+				document.querySelector('#tpl-answer-addbar-html').innerHTML = " ";
+			});
+			//回复
+			mui('body').on('tap', '#answer-post', function() {
+				var qid = this.getAttribute('data-qid');
+				var context = document.querySelector('#answer-context').value;
+				answer.add(qid, context, function(rs) {
+					if (rs.status) {
+						//隐藏表单
+						document.querySelector('#comment-bar').style.display = 'none';
+						document.querySelector('#answer-context').value = "";
+						//清空列表缓存
+						var key = 'question@list-qid:' + qid + 'page:1';
+						store.delete(key);
+						plus.nativeUI.toast('发表成功', {
+							'timeout': 'long'
+						});
+						getContext(qid);
+					} else {
+						alert(rs.message);
+					}
+				});
+			});
+		});
+		 //显示内容
+		function getContext(id) {
+			window.scrollTo(0, 0);
+			question.getInfo(id, function(rs) { 
+				if (rs.photo[0].src.indexOf('http://') == -1) {
+					rs.static_host = static_host;
+				} else {
+					rs.static_host = "";
+				}
+				var html = template('tpl-answer-context', rs);
+				document.querySelector('#tpl-answer-context-html').innerHTML = html;
+				if (user.uid()) {
+					if (user.uid() == rs.uid) {
+						//自己的提问,显示回答列表
+						answerList(id);
+					} else {
+						myAnswer(id);
+					}
+				} else {
+					document.querySelector('#tpl-answer-addbar-html').innerHTML = '<p>登录后可以回答</p>';
+				}
+			});
+		}
+
+		function myAnswer(id) {
+			answer.hasAnswer(id, function(rs1) {
+				rs1.data.id = id;
+				var html = template('tpl-answer-addbar', rs1.data);
+				document.querySelector('#tpl-answer-addbar-html').innerHTML = html;
+			});
+		}
+
+		function answerList(qid) {
+			answer.list(qid, 1, function(data) {
+				if (data.list) {
+					var html = template('tpl-answer-list', data);
+					//console.log(html)
+					document.querySelector('#tpl-answer-list-html').innerHTML = html;
+				}
+			})
+		}
+	</script>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.css">
+		<link rel="stylesheet" type="text/css" href="css/ionic.css" />
+	    <!--
+        	作者：liuisgood@outlook.com
+        	时间：2015-06-03
+        	描述：
+        <script type="text/javascript" charset="utf-8" src="js/ionic.js"></script>
+		<script type="text/javascript" charset="utf-8" src="js/ionic-angular.js"></script>
+	    <script type="text/javascript" charset="utf-8" src="js/angular-ui-router.js"></script>
+	    -->
+	    <script type="text/javascript" src="js/jquery.min.1.7.js" ></script>
+	    <script type="text/javascript" src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="js/template.js"></script>
+
+	    <script type="text/javascript" src="js/recommend.js" ></script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">	
+		<div id="pullrefresh" name="list" class="mui-scroll-wrapper" style="margin-top:10px;min-height: 400px;">
+			<div class="mui-scroll">
+				<ul class="mui-table-view mui-table-view-chevron">
+					<li class="mui-table-view-cell mui-media">
+						<a href="">
+							<img class="mui-media-object mui-pull-left" src="images/shuijiao.jpg">
+							<div class="mui-media-body">
+								吉他三月通
+								<p class='mui-ellipsis'>能和心爱的人在一起是件幸福的事情</p>
+							</div>
+						</a>
+					</li>	
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		mui.init({
+				swipeBack: false,
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+		});
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				setTimeout(function() {
+					var table = document.body.querySelector('.mui-table-view');
+					var cells = document.body.querySelectorAll('.mui-table-view-cell');
+					for (var i = cells.length, len = i + 3; i < len; i++) {
+						var li = document.createElement('li');
+						li.className = 'mui-table-view-cell';
+						li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
+						//下拉刷新，新纪录插到最前面；
+						table.insertBefore(li, table.firstChild);
+					}
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+				}, 1500);
+			}
+			var count = 0;
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				setTimeout(function() {
+					mui('#pullrefresh').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
+					var table = document.body.querySelector('.mui-table-view');
+					var cells = document.body.querySelectorAll('.mui-table-view-cell');
+					for (var i = cells.length, len = i + 20; i < len; i++) {
+						var li = document.createElement('li');
+						li.className = 'mui-table-view-cell';
+						li.innerHTML = '<a class="mui-navigate-right">Item ' + (i + 1) + '</a>';
+						table.appendChild(li);
+					}
+				}, 1500);
+			}
+			if (mui.os.plus) {
+				mui.plusReady(function() {
+//					setTimeout(function() {
+//						mui('#pullrefresh').pullRefresh().pullupLoading();
+//					}, 1000);
+
+				});
+			} else {
+//				mui.ready(function() {
+//					mui('#pullrefresh').pullRefresh().pullupLoading();
+//				});
+			}	
+	</script>
+	<script id="item" type="text/html">
+
+<ul>{{each data as value i }}
+				<li class="mui-table-view-cell mui-media">
+						<a href="">
+							<img class="mui-media-object mui-pull-left" src="img/{{if value.photo_id}}{{value.photo_id}}{{else}}1{{/if}}.jpg">
+							<div class="mui-media-body">
+								{{value.name}}
+								<p class='mui-ellipsis'>{{value.distance}}</p>
+								<p class='mui-ellipsis'>{{value.sex}}</p>
+							</div>
+						</a>
+					</li>
+
+    {{/each}}
+</ul>
+</script>
+	</body>
+</html>

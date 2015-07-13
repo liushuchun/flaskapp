@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.mui-slider-item img {
+				height: 130px;
+			}
+			header{background: #242424;}
+		</style>
+	</head>
+
+	<body>
+		<script id="tpl-template-header" type="text/html">
+			<header class="mui-bar mui-bar-nav">
+				<a id="close" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				{{if rightclass}}
+				<a class="mui-action-menu mui-icon mui-pull-right {{rightclass}}" {{if rightdo}} id="{{rightdo}}" {{/if}}></a>{{/if}}
+				<h1 id="title" class="mui-title">{{title}}</h1>
+			</header>
+		</script>
+		<div id="tpl-template-header-html"></div>
+		<div class="mui-content" id="content">
+
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		 /////test
+		var html = template('tpl-template-header', {
+			title: '返回重试',
+			rightclass: 'mui-icon-loop',
+			rightdo: 'reload'
+		});
+		document.querySelector('#tpl-template-header-html').innerHTML = html;
+		 ////
+		var selfWV, mainWV, bodyWV;
+		mui.plusReady(function() {
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			
+			mui.init({
+				swipeBack: false
+			});
+			//二级webview 
+			bodyWV = plus.webview.getWebviewById('template-index');
+			if (!bodyWV) {
+				bodyWV = plus.webview.create('../public/loading.html', 'template-index', {
+					top: '44px'
+				});
+			}
+			selfWV.append(bodyWV);
+			//关闭页面
+			window.addEventListener('close', function(e) {
+				close();
+			});
+			//打开窗口事件
+			window.addEventListener('openWindow', function(e) {
+				var url = e.detail.url;
+				var title = e.detail.title;
+				var background = e.detail.background;
+				var rightdo = e.detail.rightdo;
+				var data = {
+					title: title,
+					rightclass: e.detail.rightclass,
+					rightdo: rightdo
+				};
+				bodyWV.loadURL(url);
+				//加载头部
+				var html = template('tpl-template-header', data);
+				document.querySelector('#tpl-template-header-html').innerHTML = html;
+				//监听右上角菜单事件
+				if (rightdo) {
+					mui('header').on('tap', '#' + rightdo, function(e) {
+						mui.fire(bodyWV, rightdo);
+					})
+				}
+				//设置背景色
+				if (background) {
+					plus.navigator.setStatusBarBackground(background);
+					document.querySelector('header').style.backgroundColor = background;
+				}
+				mui.fire(mainWV, 'closeMenu');
+				//显示窗口
+				selfWV.show(animationIn);
+			});
+			//重载头部事件
+			window.addEventListener('loadHeader', function(e) {
+				mui.fire(mainWV, 'loadHeader');
+			});
+			//关闭
+			mui('body').on('tap', '#close', function() {
+				close();
+			});
+			
+			//返回
+			mui.back = function() {
+				close();
+			}
+		});
+
+		function close() {
+			bodyWV.loadData('<p align="center">请稍后...</p>')
+			bodyWV.loadURL('../public/loading.html');
+			mainWV.setStyle({
+				left: '0'
+			});
+			mui.fire(mainWV, 'loadHeader');
+			//重新加载头部
+			var html = template('tpl-template-header', {});
+			document.querySelector('#tpl-template-header-html').innerHTML = html;
+			selfWV.hide(animationOut);
+		}
+	</script>
+
+</html>

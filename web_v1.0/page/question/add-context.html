@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			body {
+				background: #f7f7f7;
+			}
+			.mui-segmented-control {
+				margin: 20px auto;
+				width: 80%;
+			}
+			.uploadbar {
+				width: 150px;
+				height: 150px;
+				margin: 10px auto;
+				text-align: center;
+			}
+			.uploadbar img {
+				max-width: 150px;
+				height: auto;
+				max-height: 150px;
+				margin: 5px auto;
+			}
+			.form {
+				width: 80%;
+				margin: 0 auto;
+			}
+			.mui-table-view li img {
+				width: 100%;
+				max-width: 200px;
+				height: auto;
+				max-height: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+
+
+			<div id="item1" class="mui-control-content mui-active">
+				<div class="body-title" id="tip">
+					<p>请上传3张花卉图片：全株、花、叶子</p></div>
+				<br>
+				<div class="form">
+					<div class="mui-input-row" style="margin: 10px 5px; display: none;" id="context-lable">
+						<textarea id="context" rows="5" placeholder="输入100字内的描述"></textarea>
+					</div>
+
+					<div class="uploadbar" id="img1" onclick="selectImg(1);">
+						<img src="../../images/uploadbg.png">
+					</div>
+					<p align="center">全株图</p>
+
+					<div class="uploadbar" id="img2" onclick="selectImg(2);">
+						<img src="../../images/uploadbg.png">
+					</div>
+					<p align="center">花图</p>
+
+					<div class="uploadbar" id="img3" onclick="selectImg(3);">
+						<img src="../../images/uploadbg.png">
+					</div>
+					<p align="center">叶子图</p>
+					<div class="mui-button-row">
+						<button type="button" class="mui-btn mui-btn-positive mui-btn-block " id="question-post" onclick="return false;">点击提交</button>
+					</div>
+					<br>
+				</div>
+
+			</div>
+
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		var selfWV, mainWV, answerWV, objId = 0, objType = 0;
+		mui.plusReady(function() {
+			//显示当前页面 
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			answerWV = plus.webview.getWebviewById('answer');
+			if (!answerWV) {
+				answerWV = plus.webview.create('./answer.html', 'answer');
+			}
+ 
+			mui('body').on('tap', '#question-post', function() {
+				var msg, err = false;
+				var context = document.querySelector('#context').value;
+				var photos = [];
+
+				$('.uploadbar').each(function(i) {
+					var src = $(this).find('img').attr('data-src');
+					if (!src) {
+						err = true;
+						if (i == 0) {
+							msg = '请上传全株图';
+						} else if (i == 1) {
+							msg = '请上传花图';
+						} else if (i == 2) {
+							msg = '请上传叶子图';
+						}
+						return;
+					} else {
+						photos.push({
+							'src': src
+						});
+					}
+				});
+				if (objType == 1) {
+					if(!context){
+						alert('请填写问题');
+						return false;
+					}
+				} else {
+					if (err == true) {
+						alert(msg);
+						return false;
+					}
+				}
+				question.add(objType, photos, context, 'huahui', function(rs) {
+					if (rs.status) {
+						document.querySelector('#context').value = "";
+						document.querySelector('#img1').innerHTML = '<img src="../../images/uploadbg.png">';
+						document.querySelector('#img2').innerHTML = '<img src="../../images/uploadbg.png">';
+						document.querySelector('#img3').innerHTML = '<img src="../../images/uploadbg.png">';
+						
+						mui.fire(answerWV, 'getContext', {
+							id: rs.data,
+							title: '花卉问答'
+						});
+						plus.nativeUI.toast('提交成功');
+					} else {
+						console.log(rs.message)
+						alert('提交失败:' + rs.message);
+					}
+				})
+			});
+		});
+
+		function myQuestion() {
+				return;
+				question.my(function(rs) {
+					if (rs.status) {
+						var html = template('tpl-question-mylist', rs.data);
+						document.querySelector('#tpl-question-mylist-html').innerHTML = html;
+					}
+				})
+			}
+			//上传头像按钮
+
+		function selectImg(objId) {
+			var btnArray = [{
+				title: "相册"
+			}, {
+				title: "拍照"
+			}];
+			plus.nativeUI.actionSheet({
+				title: "选择照片",
+				cancel: "取消",
+				buttons: btnArray
+			}, function(e) {
+				var index = e.index;
+				switch (index) {
+					case 0:
+						break;
+					case 1:
+						//相册
+						getGallery(objId);
+						break;
+					case 2:
+						//拍照
+						getImage(objId);
+						break;
+				}
+			});
+		};
+		 // 拍照添加文件
+		function getImage(objId) {
+			var cmr = plus.camera.getCamera();
+			cmr.captureImage(function(p) {
+				plus.io.resolveLocalFileSystemURL(p, function(entry) {
+					var localurl = entry.toLocalURL();
+					appendFile(localurl, objId);
+				});
+			}, function(error) {
+				console.log("照片添加失败: " + error.message);
+			});
+		};
+		 // 从相册添加文件 
+		function getGallery(objId) {
+			plus.gallery.pick(function(path) {
+				appendFile(path, objId);
+			});
+		};
+
+		function appendFile(path, objId) {
+			var img = new Image();
+			img.src = path;
+			img.onload = function() {
+				var that = this;
+				//生成比例 
+				var w = that.width;
+				var h = that.height;
+				if (w > 500) {
+					var scale = w / h;
+					w = 500;
+					h = w / scale;
+				}
+				//生成canvas
+				var canvas = document.createElement('canvas');
+				var ctx = canvas.getContext('2d');
+				$(canvas).attr({
+					width: w,
+					height: h
+				});
+				ctx.drawImage(that, 0, 0, w, h);
+				var suffix = path.substr(path.length - 3);
+				suffix = suffix.toLocaleLowerCase();
+				if (suffix != 'png' && suffix != 'jpg' && suffix != 'gif') {
+					alert('只支持gif,jpg,png图片,现在是:' + suffix);
+					return;
+				}
+				if (suffix == 'jpg') {
+					type = 'image/jpeg';
+				} else {
+					type = 'image/png';
+				}
+				var base64 = canvas.toDataURL(type);
+				upload(base64, objId);
+			}
+		};
+		 // 上传文件
+		function upload(src, objId) {
+			var obj = document.querySelector('#img' + objId);
+			if (!src) {
+				plus.nativeUI.alert("没有添加上传文件！");
+				return;
+			}
+			system.upload(src, 'question', function(rs) {
+				if (rs.status) {
+					obj.innerHTML = '<img data-src="' + rs.data + '" src="' + static_host + rs.data + '!small" />'; 
+				} else {
+					alert(rs.message);
+				}
+			});
+			return;
+		};
+	</script>
+
+</html>

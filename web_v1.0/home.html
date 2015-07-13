@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>main</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="css/ionic.css" />
+  		<script src="js/mui.js"></script>
+		<link rel="stylesheet" href="css/mui.css">
+		<style>
+			html,body {
+				background-color: #efeff4;
+			}
+		</style>
+	</head>
+	<body>
+	<div class="mui-content" style="position:fixed;width:100%;background-color:#fff;">
+		<div class="item-input-inset" style="">
+		  <label class="item-input-wrapper" style="border:1px solid #007AFF;">
+		    <i class="mui-icon mui-icon-search"></i>
+		    <input type="search" placeholder="关键字" style="text-align: left;margin-bottom: 8px;margin-top: 7px;height: 25px;">
+		  </label>
+		  <button class="button button-positive">搜索</button>
+		</div>
+		<div class="button-bar" style="width:80%;float:left;margin-right:1%;">
+			<div id="segmentedControl" class="mui-segmented-control">
+				<a class="mui-control-item mui-active" name="dis">距离</a>
+				<a class="mui-control-item" name="pri">价格</a>
+				<a class="mui-control-item" name="sex">性别</a>
+		   	</div>
+		</div>
+		<nav class="mui-bar-tab" style="width:18%;background-color: #DDD;">
+			<a id="defaultTab" class="mui-tab-item mui-active"  href="home_map.html">
+				<span class="mui-icon mui-icon mui-icon-map"></span>
+			</a>
+			<a class="mui-tab-item" href="home_list.html">
+				<span class="mui-icon mui-icon-bars"></span>
+			</a>
+		</nav>
+	</div>
+	<script type="text/javascript">
+		var subpages = ['home_map.html','home_list.html'];
+		var subpage_style = {
+			top:'120px',
+			bottom:'0px'
+		};
+		mui.plusReady(function(){
+			var self = plus.webview.currentWebview();
+			for(var i=0;i<2;i++){
+				var sub = plus.webview.create(subpages[i],subpages[i],subpage_style);
+					if(i>0){
+						sub.hide();
+					}
+					self.append(sub);
+			}		
+		});
+		var activeTab = subpages[0];
+			//选项卡点击事件
+		mui('.mui-bar-tab').on('tap', 'a', function(e) {
+			var targetTab = this.getAttribute('href');
+			if (targetTab == activeTab) {
+				return;
+			}
+			//显示目标选项卡
+			plus.webview.show(targetTab);
+			//隐藏当前;
+			plus.webview.hide(activeTab);
+			//更改当前活跃的选项卡
+			activeTab = targetTab;
+		});	
+		mui.init();			
+	</script>
+	<script src="js/mui.min.js"></script>			
+	</body>
+</html>

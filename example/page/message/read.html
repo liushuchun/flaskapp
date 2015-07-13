@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+	</head>
+
+	<body>
+
+		<div class="mui-content read-context">
+			<h4 id='context-title'></h4>
+			<div class="read-context-bar">
+				<img src="../../images/icon-time.jpg"><span id='context-createdata'></span> </div>
+
+			<div id="context-article"></div>
+
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		var self, main;
+		 //从服务器获取数据
+		mui.plusReady(function() {
+			id = get('id');
+			//显示当前页面 
+			self = plus.webview.currentWebview();
+			main = plus.webview.currentWebview().opener();
+			//  
+			var url = host + '?m=notice&a=getNotice';
+			var uid = cache('uid');
+			var utoken = cache('utoken');
+			if (!uid) {
+				mui.fire(main, 'login');
+				return;
+			} else {
+				var obj = document.querySelector('.read-context');
+				startNetwork();
+				$.get(url, {
+					id: id,
+					uid: uid,
+					utoken: utoken
+				}, function(rs) {
+					endNetwork();
+					//console.log(JSON.stringify(rs))
+					if (rs.status) {
+						obj.querySelector('#context-title').innerHTML = rs.data.title;
+						obj.querySelector('#context-createdata').innerHTML = rs.data.createtime;
+						obj.querySelector('#context-article').innerHTML = rs.data.context;
+					} else {
+						console.log(rs.message)
+					}
+				});
+			}
+			window.addEventListener('del-message', function(e) {
+				var btnArray = [{
+					title: "删除"
+				}];
+				plus.nativeUI.actionSheet({
+					title: "操作",
+					cancel: "取消",
+					buttons: btnArray
+				}, function(e) {
+					var index = e.index;
+					switch (index) {
+						case 0:
+							break;
+						case 1:
+							//删除
+							var uid = cache('uid');
+							var utoken = cache('utoken');
+							var url = host + '?m=notice&a=delNotice';
+							startNetwork();
+							mui.get(url, {uid:uid,utoken:utoken,id:id}, function(rs) {
+								endNetwork();
+								if(rs.status){
+									var body = plus.webview.getWebviewById('bodyWebview');
+									mui.fire(body,'listNotice');
+									mui.fire(main, 'closeWindow');
+								}else{
+									console.log(rs.message);
+								}
+							})
+							break;
+					}
+				});
+			});
+		});
+	</script>
+
+</html>

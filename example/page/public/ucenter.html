@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			html {
+				background: #333;
+				border-right: 2px solid #000000;
+			}
+			#tpl-info-html {
+				min-height: 70px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="ucenter">
+				<div class="ucenter-header" val="setting-userinfo">
+					<script id="tpl-info" type="text/html">
+						<div class="ucenter-avatar openLocaPage" data="{url:'../setting/userinfo.html',title:'用户信息'}">
+							<img src="{{avatar}}" />
+						</div>
+						<p class="ucenter-text">{{username}} {{if sex}}
+							<img src="../../images/sex{{sex}}.png" /> {{/if}}
+						</p>
+						<p class="ucenter-text">
+							<span class="mui-badge mui-badge-warning ucenter-lv">{{lv_name}}</span> {{if province}}
+							<span class="mui-badge mui-badge-purple ucenter-lv">{{province}}</span> </p>
+						{{/if}}
+					</script>
+					<div id='tpl-info-html'>
+					</div>
+				</div>
+				<ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted ucenter-menu">
+					<li class="mui-table-view-cell openLocaPage" data="{url:'../setting/userinfo.html',title:'用户信息'}">
+						<a class="mui-navigate-right" id="wv-shequ" val="setting">
+							<span class="mui-icon mui-icon-person"></span> <span>用户信息</span>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right openLocaPage" data="{url:'../question/my.html',title:'看花识图'}">
+							<span class="mui-icon mui-icon-image"></span> <span>看花识图</span>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right openLocaPage" data="{url:'../setting/system.html',title:'系统设置'}">
+							<span class="mui-icon mui-icon-gear"></span> <span>系统设置</span>
+						</a>
+					</li>
+
+				</ul>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/zepto.min.js"></script>
+		<script src="../../js/template.js"></script>
+		<script src="../../js/common.js"></script>
+		<script>
+			 //获得侧滑主窗口webview对象
+			var mainWV = null;
+			mui.plusReady(function() {
+				mainWV = plus.webview.currentWebview().opener();
+				self = plus.webview.currentWebview();
+				document.addEventListener("swipeleft", function(e) {
+					mui.fire(mainWV, "closeMenu");
+				});
+				document.addEventListener("loadUserInfo", function(e) {
+					var uid = user.uid();
+					if (!user.uid()) {
+						indexWV = plus.webview.getLaunchWebview();
+						mui.fire(indexWV, 'login');
+						return false;
+					}
+					user.getInfo(uid, function(info) {
+						if (info.location) {
+							province = info.location.split(',');
+							info.province = province[0];
+						}
+						var html = template('tpl-info', info);
+						document.querySelector('#tpl-info-html').innerHTML = html;
+					});
+				});
+				mui('body').on('tap', '.openLocaPage', function() {
+					var data = this.getAttribute('data');
+					if (!data) {
+						return;
+					}
+					data = eval("(" + data + ")");
+					mui.fire(mainWV, "openLocaPage", data);
+				});
+			});
+		</script>
+	</body>
+
+</html>

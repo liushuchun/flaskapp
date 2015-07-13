@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.mui-slider-item img {
+				height: 130px;
+			}
+			.list-icon {
+				height: 75px;
+				margin-right: 5px;
+			}
+			.list-intro {
+				color: #ccc;
+			}
+			li h4 {
+				color: green;
+				display: block;
+				font-size: 14px;
+			}
+			.mui-grid-view {
+				min-height: 300px;
+			}
+			.page-btn {
+				text-align: center;
+				padding-top: 10px;
+				padding-bottom: 20px;
+				display: none;
+			}
+			body {
+				padding-bottom: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="body-title">这些花的名字</div>
+			<ul class="mui-table-view mui-grid-view mui-grid-12">
+				<script type="text/html" id="tpl-question-list">
+					{{each list as val i}}
+					<li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-3" data="{id:{{val.id}},title:'这是什么花'}">
+						<img src="{{static_host+val.photo[0].src}}!avatar"> {{if val.answernum==0}}
+						<p>等你回答</p>
+						{{else}}
+						<p>{{val.answernum}}人回答</p>
+						{{/if}}
+					</li>
+					{{/each}}
+				</script>
+				<div id="tpl-question-list-html"></div>
+
+			</ul>
+			<h5 id="question-nextpage-btn" class="page-btn" data-page="2">点击加载更多</h5>
+		</div>
+	</body>
+
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script>
+		var mainWV, answerWV, selfWV;
+		mui.plusReady(function() {
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			answerWV = plus.webview.getWebviewById('answer');
+			if (!answerWV) {
+				answerWV = plus.webview.create('./answer.html', 'answer');
+			}
+			addWV = plus.webview.getWebviewById('question-add');
+			if (!addWV) {
+				addWV = plus.webview.create('./add.html', 'question-add');
+			}
+			var type = get('type');
+			mui('body').on('tap', '.mui-table-view-cell', function() {
+				var data = this.getAttribute('data');
+				data = eval('(' + data + ')');
+				mui.fire(answerWV, 'getContext', data);
+			});
+			//点击下一页
+			$('body').on('tap', '#question-nextpage-btn', function() {
+				var page = $(this).data('page');
+				var html = $(this).html();
+				//防止重复点击
+				if (html == '点击加载更多') {
+					$(this).html('<p style="text-align:center;padding-top:5px;" ><span class="mui-spinner"></span></p>');
+					listQuestion(page);
+				}
+			});
+			//
+			document.addEventListener('clear', function(e) {
+				document.querySelector('.mui-scroll').innerHTML = '';
+			});
+			document.addEventListener('add', function(e) {
+				if (!user.uid()) {
+					indexWV = plus.webview.getLaunchWebview();
+					mui.fire(indexWV, 'login');
+					return false;
+				}
+				mui.fire(addWV, 'getContext', {
+					title: '求花的名字'
+				});
+			});
+			listQuestion(1);
+		});
+
+		function listQuestion(page) {
+			var page = page > 0 ? page : 1;
+			type = 0;
+			question.list('huahui', type, page, function(rs) {
+				if (rs.list[0].photo[0].src.indexOf('http://') == -1) {
+					rs.static_host = static_host;
+				} else {
+					rs.static_host = "";
+				}
+				var html = template('tpl-question-list', rs);
+				if (page > 1) {
+					$('#tpl-question-list-html').append(html);
+				} else {
+					$('#tpl-question-list-html').html(html);
+				}
+				if (rs.next_page > 0 && rs.next_page <= 10) {
+					$('#question-nextpage-btn').html('点击加载更多').data('page', rs.next_page).show();
+				} else {
+					$('#question-nextpage-btn').data('page', '').hide();
+				}
+			});
+		}
+	</script>
+
+</html>

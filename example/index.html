@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI2</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="./css/mui.min.css">
+		<link rel="stylesheet" href="./css/style.css">
+		<style>
+			.mui-bar {
+				position: absolute;
+			}
+			.mui-tab-item span {
+				color: #6D6D72;
+			}
+			.nav-active span {
+				color: green;
+			}
+			.mui-bar-tab { 
+				background: #eee;
+				border-top: solid 1px #ccc;
+			}
+			.blogo {
+				text-align: center;
+			}
+			.blogo img {
+				margin-top: 90px;
+				height: 50px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<script id="tpl-header" type="text/html">
+			<span class="mui-icon mui-pull-left {{if uid}}ucentet-btn{{else}}login-btn{{/if}}">
+			{{if avatar}}
+			<img class="header-avatar" src="{{#avatar}}">  
+			{{else}} 
+				<img class="header-avatar" src="./images/avatar.jpg">  
+			{{/if}}  
+			</span>
+			<h1 class="mui-title">{{if title}}{{#title}}{{/if}}</h1> 
+			{{if rightclass}}
+			<a class="mui-icon mui-pull-right {{#rightclass}}" {{if rightdo}} id="{{rightdo}}" {{/if}}></a>
+			{{/if}}
+		</script>
+		<header id="header" class="mui-bar mui-bar-nav">
+
+		</header>
+		<div class="blogo">
+			<img src="images/logo155.png" />
+		</div>
+		<nav class="mui-bar mui-bar-tab">
+
+			<a class="mui-tab-item nav-active" data="{title:'花园',type:'index',rightclass:'mui-icon-compose','rightdo':'add-shuoshuo'}">
+				<span class="mui-icon mui-icon-pengyouquan" id="notice-num"></span>
+				<span class="mui-tab-label">花友圈</span>
+			</a>
+
+			<a class="mui-tab-item" data="{title:'发现',type:'group'}">
+				<span class="mui-icon mui-icon-paperplane"></span>
+				<span class="mui-tab-label">发现</span>
+			</a>
+
+			<a class="mui-tab-item" data="{title:'百科',type:'baike'}"> 
+				<span class="mui-icon mui-icon-search"></span>
+				<span class="mui-tab-label">花卉大全</span>
+			</a>
+
+		</nav>
+		<script src="./js/mui.min.js"></script>
+		<script src="./js/zepto.min.js"></script>
+		<script src="./js/template.js"></script>
+		<script src="./js/common.js"></script>
+		<script src="./js/index.js"></script>
+		<script src="./js/update.js"></script>
+	</body>
+
+</html>

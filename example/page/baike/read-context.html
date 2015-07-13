@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.mui-slider {
+				min-height: 200px;
+			}
+			.context-article {
+				margin-top: 15px;
+				text-align: justify;
+			}
+			.context-article img {
+				width: 100%;
+				max-width: 600px;
+				min-height: 150px;
+				height: auto;
+				margin: 5px auto;
+			}
+			.context-article p {
+				color: #242424;
+				text-indent: 2em;
+			}
+			.read-context-bar {
+				margin: 5px auto 50px auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script type="text/html" id="tpl-baike-context">
+			{{if slide}}
+			<div id="slider" class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop">
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="{{slide[0].img}}">
+						</a>
+					</div>
+					{{each slide as phone i}}
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="{{phone.img}}">
+						</a>
+					</div>
+					{{/each}}
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="{{slide[0].img}}">
+						</a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					{{each slide as phone i}}
+					<div class="mui-indicator {{if i==0}}mui-active{{/if}}"></div>
+					{{/each}}
+				</div>
+			</div>
+			{{/if}}
+			<div class="read-context" data-title="{{title}}" data-url="{{url}}">
+
+				<div class="context-article">{{#context}}</div>
+
+				<div class="read-context-bar">
+					<img src="../../images/icon-viewnum.jpg"> {{viewnum}} 人阅读
+					<img src="../../images/icon-time.jpg"> {{updatedata}} 最后更新
+				</div>
+			</div>
+		</script>
+		<div id="tpl-baike-context-html" class="mui-content"></div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		var selfWV, mainWV;
+		mui.plusReady(function() {
+			//显示当前页面 
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			window.addEventListener('getContext', function(e) {
+				var id = e.detail.id;
+				getContext(id);
+			});
+			//分享
+			window.addEventListener('share', function(e) {
+				var id = 'weixin';
+				var ex = 'WXSceneTimeline';
+				share(id, ex);
+			});
+			window.addEventListener('clear', function(e) {
+				document.querySelector('#tpl-baike-context-html').innerHTML = '';
+			});
+			getContext(get('id'));
+		});
+		 //显示文章 
+		function getContext(id) {
+			window.scrollTo(0, 0);
+			//显示加载图标
+			setTimeout(function() {
+				if ($('#tpl-baike-context-html').html() == "") {
+					$('#tpl-baike-context-html').html('<p style="text-align:center;padding-top:20px;" ><span class="mui-spinner"></span></p>');
+				}
+			}, 500);
+			obj = document.querySelector('#tpl-baike-context-html');
+			baike.getInfo(id, function(info) {
+				var html = template('tpl-baike-context', info);
+				obj.innerHTML = html;
+				var slider = mui("#slider");;
+				slider.slider({
+					interval: 3000
+				});
+				//查找图片的父<p>标签
+				obj = $('#tpl-baike-context-html').find('img').parent('p');
+				obj.attr('style', 'text-indent:0em;');
+				//增加访问量
+				baike.addView(id);
+			});
+		}
+
+		function share(id, ex) {
+			plus.share.getServices(function(s) {
+				shares = {};
+				for (var i in s) {
+					var t = s[i];
+					shares[t.id] = t;
+				}
+				if (!id || !(s = shares[id])) {
+					plus.nativeUI.toast("无效的分享服务！");
+					return;
+				}
+				if (s.authenticated) {
+					//已授权,分享
+					shareMessage(s, ex);
+				} else {
+					//重新权
+					s.authorize(function() {
+						shareMessage(s, ex);
+					}, function(e) {
+						plus.nativeUI.toast("认证授权失败：" + e.code + " - " + e.message);
+					});
+				}
+			});
+		}
+
+		function shareMessage(s, ex) {
+			var msg = {
+				extra: {
+					scene: ex
+				}
+			};
+			msg.thumbs = ['../../images/logo155.png'];
+			msg.title = $('.read-context').data('title') + ' - 枫桥居';
+			msg.href = $('.read-context').data('url') ? $('.read-context').data('url') + '?openid=' + s.id : "http://hua.fengqiaoju.com";
+			msg.pictures = ["http://hua-img1.fengqiaoju.com/huahui/hongyundangtou/hongyundangtou-5538aad6d9dcb75_150_150.jpg"];
+			s.send(msg, function() {
+				plus.nativeUI.toast("分享到\"" + s.description + "\"成功！ ");
+			}, function(e) {
+				plus.nativeUI.toast("分享到\"" + s.description + "\"失败: " + e.code + " - " + e.message);
+			});
+		}
+	</script>
+
+</html>

@@ -1,0 +1,244 @@
+﻿<link rel="stylesheet" href="../../css/mui.min.css">
+<style>
+	.input {
+		float: left;
+		width: 33%;
+		color: blue;
+	}
+	#dxcode {
+		width: 150px;
+	}
+	body {
+		background: #efeff4;
+	}
+	.mui-table-view-cell.mui-active {
+		background-color: #007AFF;
+	}
+	.mui-table-view-cell.mui-active a {
+		color: #fff;
+	}
+	.key {
+		display: block;
+		float: left;
+	}
+	.val {
+		color: #ccc;
+		text-align: right;
+		display: block;
+		padding-right: 20px;
+	}
+	.username {
+		margin: 15px auto;
+		font-weight: bold;
+		font-size: 16px;
+	}
+	#x{border-radius: 50%;}
+	
+</style>
+<script id="tpl-userinfo" type="text/html">
+	<ul class="mui-table-view">
+
+		<li class="mui-table-view-cell mui-media" onclick="selectImg();" id="picture-btn">
+			<a class="mui-navigate-right">
+				<img class="mui-media-object mui-pull-left" id="x" src="{{avatar}}">
+				<div class="mui-media-body">
+					{{username}}
+					<p class='mui-ellipsis'>轻触修改头像</p>
+				</div>
+			</a>
+		</li>
+	</ul>
+	<h5 class="mui-content-padded">设置资料</h5>
+	<ul class="mui-table-view">
+		<li class="mui-table-view-cell openLocaPage" href="./userinfo-phone.html">
+			<a class="mui-navigate-right"><span class="key">手机：</span><span class="val">{{phone}}</span></a>
+		</li>
+		<li class="mui-table-view-cell openLocaPage" href="./userinfo-email.html">
+			<a class="mui-navigate-right" href="#"><span class="key">邮箱：</span><span class="val">{{email?email:'点此完善'}}</span></a>
+
+		</li>
+
+		<li class="mui-table-view-cell openLocaPage" href="./userinfo-sex.html">
+			<a class="mui-navigate-right" href="#"><span class="key">性别：</span><span class="val">{{sex==1?'男':'女'}}</span></a>
+
+		</li>
+		<li class="mui-table-view-cell openLocaPage" href="./userinfo-addr.html" data="{{location}}">
+			<a class="mui-navigate-right" href="#"><span class="key">所在地：</span><span class="val">{{location1?location1:'点此选择'}}</span></a>
+
+		</li>
+		<li class="mui-table-view-cell openLocaPage" href="./userinfo-qq.html">
+			<a class="mui-navigate-right" href="#"><span class="key">QQ：</span><span class="val">{{qq?qq:'点此完善'}}</span></a>
+
+		</li>
+	</ul>
+	{{if lv<1}}
+	<h5 class="mui-content-padded">提示：完善所有信息后<span class="mui-badge mui-badge-warning">种子</span>可以<span class="mui-badge mui-badge-warning">发芽</span></h5>
+	{{/if}}
+</script>
+<div id="tpl-userinfo-html"></div>
+
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/zepto.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/template.js"></script>
+<script src="../../js/lrz.mobile.min.js"></script>
+
+<script type="text/javascript">
+	mui.plusReady(function() {
+		loadInfo();
+		mui('body').on('tap', '.openLocaPage', function() {
+			var url = this.getAttribute('href');
+			var data = this.getAttribute('data');
+			if (url) {
+				mui.openWindow({
+					url: url,
+					extras: {
+						data: data
+					},
+					show: {
+						autoShow: true,
+						duration: 150,
+						aniShow: animationIn
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+			}
+			//监听事件
+			document.addEventListener("loadInfo", function(e) {
+				loadInfo();
+			});
+		});
+	});
+
+	function loadInfo() {
+		var uid = user.uid;
+		var url = host + '?m=user&a=userInfo';
+		ajax.get(url, {
+			uid: uid
+		}, function(rs) {
+			cache('userinfo_' + uid, null); //清空缓存
+			endNetwork();
+			var html = template('tpl-userinfo', rs.data);
+			document.querySelector('#tpl-userinfo-html').innerHTML = html;
+		});
+		
+		//检查等级
+		user.updateLV(function(rs){ 
+			console.log(JSON.stringify(rs))
+		});
+	};
+	//上传头像按钮
+	function selectImg() {
+		var btnArray = [{
+			title: "相册"
+		}, {
+			title: "拍照"
+		}];
+		plus.nativeUI.actionSheet({
+			title: "选择照片",
+			cancel: "取消",
+			buttons: btnArray
+		}, function(e) {
+			var index = e.index;
+			switch (index) {
+				case 0:
+					break;
+				case 1:
+					//相册
+					getGallery();
+					break;
+				case 2:
+					//拍照
+					getImage();
+					break;
+			}
+		});
+	};
+	// 拍照添加文件
+	function getImage() {
+		var cmr = plus.camera.getCamera();
+		cmr.captureImage(function(p) {
+			plus.io.resolveLocalFileSystemURL(p, function(entry) {
+				var localurl = entry.toLocalURL();
+				appendFile(localurl);
+			});
+		}, function(error) {
+			console.log("照片添加失败: " + error.message);
+		});
+	};
+	// 从相册添加文件 
+	function getGallery() {
+		plus.gallery.pick(function(path) {
+			appendFile(path);
+		});
+	};
+
+	function appendFile(path) {
+		lrz(path, {
+			width: 400
+		}, function(results) {
+			 upload(results.base64);
+		});
+		return;
+		var img = new Image();
+		img.src = path;
+		img.onload = function() {
+			var that = this;
+			//生成比例 
+			var w = that.width;
+			var h = that.height;
+			if (w > 200) {
+				var scale = w / h;
+				w = 200;
+				h = w / scale;
+			}
+			//生成canvas
+			var canvas = document.createElement('canvas');
+			var ctx = canvas.getContext('2d');
+			$(canvas).attr({
+				width: w,
+				height: h
+			});
+			ctx.drawImage(that, 0, 0, w, h);
+			var suffix = path.substr(path.length - 3);
+			suffix = suffix.toLocaleLowerCase();
+			if (suffix != 'png' && suffix != 'jpg' && suffix != 'gif') {
+				alert('只支持gif,jpg,png图片,现在是:' + suffix);
+				return;
+			}
+			if (suffix == 'jpg') {
+				type = 'image/jpeg';
+			} else {
+				type = 'image/png';
+			}
+			var base64 = canvas.toDataURL(type);
+			upload(base64);
+		}
+	};
+	// 上传文件
+	function upload(base64) {
+		if (!base64) {
+			plus.nativeUI.alert("没有添加上传文件！");
+			return;
+		}
+		url = user.uploadAvatar(base64, function(rs) {
+			if (rs.status) {
+				avatarUrl = rs.data;
+				user.updateAvatar(avatarUrl, function(rs) {
+					if (rs.status) {
+						user.deleteCache();
+						document.querySelector('#x').src = base64;
+						plus.nativeUI.toast('头像上传成功');
+					} else {
+						alert(rs.message);
+					}
+				});
+			} else {
+				alert(rs.message);
+				return false;
+			}
+		});
+	};
+</script>

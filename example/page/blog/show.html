@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.context-article {
+				padding: 10px;
+				text-align: justify;
+			}
+			.context-article img {
+				width: 100%;
+				max-width: 600px;
+				min-height: 150px;
+				height: auto;
+				margin: 5px auto;
+			}
+			.context-article p {
+				color: #242424;
+			}
+			.head {
+				clear: both;
+				overflow: hidden;
+				font-size: 14px;
+				padding-top: 20px;
+				color: #000;
+			}
+			.head .usertop {
+				margin-top: 3px;
+			}
+			.head .username {
+				color: #000000;
+			}
+			.head .mui-pull-right {
+				padding-right: 10px;
+				color: #ccc;
+				font-size: 12px;
+			}
+			.head .avatar {
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				float: left;
+				margin: 0 10px 10px 10px;
+			}
+			h4 {
+				margin: 20px auto;
+			}
+			#comment-bar {
+				overflow: hidden;
+				margin-bottom: 50px;
+			}
+			.mui-media {
+				background-color: none;
+				border-bottom: solid 1px #ccc;
+				margin: 10px auto;
+			}
+			.mui-media-body {
+				font-size: 12px;
+			}
+			.qcontext {
+				padding: 20px 10px;
+			}
+			#tpl-comment-list-html {
+				margin-bottom: 50px;
+			}
+			#tpl-blog-context-html {
+				min-height: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script type="text/html" id="tpl-blog-context">
+			<div class="head">
+				<img src="{{user.avatar}}" class="avatar">
+				<div class="usertop">
+					<div class="mui-pull-left">
+						<span class="mui-badge mui-badge-warning ">{{user.lv_name}}</span> <span class="username">{{user.username}}</span>
+						<img src="../../images/sex{{user.sex}}.png">
+					</div>
+					<div class="mui-pull-right">
+
+					</div>
+				</div>
+			</div>
+			<p style="color: #CCCCCC; padding-left: 10px;">{{createtime}}</p>
+			<div class="context-article">
+
+				<p>{{#context}} {{if photo}} {{each photo as val i}}</p>
+				<p>
+					<img src="{{val.photo}}" />
+				</p>
+				{{/each}} {{/if}}
+			</div>
+		</script>
+		<div id="tpl-blog-context-html" class="mui-content ">
+		</div>
+
+		<script type="text/html" id="tpl-comment-list">
+			<div id="comment-bar" class="mui-content-padded">
+
+				<h4>评论</h4>
+				<div class="mui-input-row" style="margin: 10px 5px;">
+					<textarea id="context" rows="3" placeholder="评论200字以内"></textarea>
+				</div>
+
+				<div class="mui-button-row">
+					<button type="button" class="mui-btn mui-btn-positive mui-btn-block" id="comment-post">提交评论</button>
+				</div>
+
+			</div>
+			<div class="body-title">大家的评论</div>
+			{{if total_num>0}}
+			<ul class="mui-table-view">
+				{{each list as val i}}
+				<li class="mui-media">
+					<div class="head">
+						<img src="{{val.user.avatar}}" class="avatar">
+						<div class="usertop">
+							<div class="mui-pull-left">
+								<span class="mui-badge mui-badge-warning ">{{val.user.lv_name}}</span> <span class="username">{{val.user.username}}</span>
+								<img src="../../images/sex{{val.user.sex}}.png">
+							</div>
+							<div class="mui-pull-right">
+								{{val.createtime}}
+							</div>
+						</div>
+					</div>
+					<div class="qcontext">
+						{{val.context}}
+					</div>
+				</li>
+				{{/each}}
+			</ul>
+			{{else}}
+			<p align="center">暂无评论</p>
+			{{/if}}
+		</script>
+		<div id="tpl-comment-list-html" class="mui-content-padded"></div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script>
+		var mainWV, selfWV;
+		mui.plusReady(function() {
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			
+			var id = system.get('id');
+			//获取内容
+			blog.getInfo(id, function(info) {
+				obj = document.querySelector('#tpl-blog-context-html');
+				var html = template('tpl-blog-context', info);
+				obj.innerHTML = html;
+				//查找图片的父<p>标签
+				obj = $('#tpl-blog-context-html').find('img').parent('p');
+				obj.attr('style', 'text-indent:0em;');
+			});
+			setTimeout(function() {
+				commentList(id);
+			}, 300);
+			//提交评论 
+			mui('body').on('tap', '#comment-post', function() {
+				var context = document.querySelector('#context').value;
+				if (context.length > 200 || context.length <= 2) {
+					alert('内容必须3~200个字内,现在是:' + context.length);
+					return false;
+				}
+				blog.addComment(context, id, function(rs) {
+					console.log(JSON.stringify(rs));
+					if (rs.status) {
+						plus.nativeUI.toast(rs.message);
+						document.querySelector('#context').value = '';
+						commentList(id, true);
+					} else {
+						alert(rs.message);
+						return false;
+					}
+				});
+			});
+		});
+
+		function commentList(id, clearcache) {
+			blog.commentList(id, 1, function(data) {
+				if (data.list) {
+					var html = template('tpl-comment-list', data);
+					//console.log(html)
+					document.querySelector('#tpl-comment-list-html').innerHTML = html;
+				}
+			}, clearcache);
+		}
+
+		
+	</script>
+
+</html>

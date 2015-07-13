@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			.mui-slider-item img {
+				height: 130px;
+			}
+			h5 {
+				margin: 5px 0 5px 20px;
+				border-bottom: solid 1px #ccc;
+				padding: 10px 0;
+			}
+			.list-icon {
+				height: 75px;
+				margin-right: 5px;
+			}
+			.list-intro {
+				color: #ccc;
+			}
+			li h4 {
+				color: green; display: block; font-size: 14px;
+			}
+			.item-image{width: 92px; height: 68px;}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+
+			<!--下拉刷新容器-->
+			<div id="pullrefresh" class="mui-scroll-wrapper">
+				<div class="mui-scroll"></div>
+			</div>
+		</div>
+	</body>
+	<script id="tpl-list" type="text/html">
+		{{each list as val i}}
+		<li class="mui-table-view-cell mui-media openLocaPage" data="{id:{{val.id}},title:'内容'}">
+			<a class="mui-navigate-right">
+				<img class="list-icon mui-pull-left item-image" src="{{val.thumb200}}">
+				<div class="mui-media-body">
+					<h4>{{val.title}}</h4>
+					<p>{{val.intro}}</p>
+					<p class="list-intro">
+						<img src="../../images/icon-viewnum.jpg"> {{val.viewnum}}
+						<img src="../../images/icon-time.jpg"> {{val.updatedata}}
+					</p>
+				</div>
+			</a>
+		</li>
+		{{/each}}
+	</script>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script>
+		var currentPage = 1;
+		var totalPage = 2;
+		var mainWV, readWV, selfWV;
+		/**
+		 * 下拉刷新具体业务实现
+		 */
+		function pulldownRefresh() {
+			var surl = get('surl');
+			article.list(surl, currentPage, function(data) {
+				var table = document.body.querySelector('.mui-scroll');
+				var html = '<ul class="mui-table-view mui-table-view-chevron">' + template('tpl-list', data) + '</ul>';
+				//下拉刷新，新纪录插到最前面；
+				table.innerHTML = html;
+				currentPage = 1;
+			});
+			mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+		};
+		/**
+		 * 上拉加载具体业务实现
+		 */
+		function pullupRefresh() {
+			var _this = this;
+			var surl = get('surl');
+			currentPage++;
+			article.list(surl, currentPage, function(data) {
+				var table = document.body.querySelector('.mui-table-view');
+				totalPage = parseInt(data.total_page);
+				if (currentPage > totalPage) {
+					_this.endPullupToRefresh(true); //参数为true代表没有更多数据了。
+					var context = table.innerHTML;
+					html = context + '<h5 align="center">已显示全部</h5>';
+					table.innerHTML = html;
+				} else {
+					var context = table.innerHTML;
+					var html = template('tpl-list', data);
+					html = context + '<h5>第' + (currentPage) + '页</h5>' + html;
+					table.innerHTML = html;
+					_this.endPullupToRefresh(false);
+				}
+			});
+		}
+		mui.plusReady(function() {
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			mui.init({
+				swipeBack: false,
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						contentrefresh: '正在刷新...',
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
+			readWV = plus.webview.getWebviewById('hua-read');
+			if (!readWV) {
+				readWV = plus.webview.create('./read.html', 'hua-read');
+			}
+			mui('body').on('tap', '.openLocaPage', function() {
+				var data = this.getAttribute('data');
+				data = eval('(' + data + ')');
+				mui.fire(readWV, 'getContext', data);
+			});
+			//
+			document.addEventListener('clear', function(e) {
+				document.querySelector('.mui-scroll').innerHTML = '';
+			});
+			pulldownRefresh();
+		});
+		
+	</script>
+
+</html>

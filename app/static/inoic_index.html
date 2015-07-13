@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>主页</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0;" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/ionic.css" />
+    <script type="text/javascript" charset="utf-8" src="js/ionic.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/ionic-angular.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/angular-ui/angular-ui-router.js"></script>
+  	<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+  	<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+  	<!--icon css-->
+  	<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" /> 
+<style type="text/css">
+#mapContainer {width:100%;min-height:550px;border:1px solid gray;}
+</style>  
+<script>
+	$(function(){
+		$('[name=changeTolist]').click(function(){
+			console.log("change to list");
+			$('div[name=map]').css("display","none");
+			$('div[name=list]').css("display","block");
+			$(this).removeClass('button-outline');
+			$(this).addClass('button-positive');
+			$('[name=changeTomap]').removeClass('button-positive');
+			$('[name=changeTomap]').addClass('button-outline');
+		});
+		$('[name=changeTomap]').click(function(){
+			console.log("change to map");
+			$('div[name=list]').css("display","none");
+			$('div[name=map]').css("display","block");
+			$(this).removeClass('button-outline');
+			$(this).addClass('button-positive');
+			$('[name=changeTolist]').removeClass('button-positive');
+			$('[name=changeTolist]').addClass('button-outline');
+		});
+	});
+</script>
+   
+</head>
+<body> 
+
+<div class="bar bar-header item-input-inset" style="position: fixed;">
+  <label class="item-input-wrapper">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="search" placeholder="Search">
+  </label>
+  <button class="button button-positive">搜索</button>
+</div>
+<div class="bar bar-subheader" style="position: fixed;">
+	<div class="button-bar" style="width:80%;float:left;margin-right:1%;">
+	  <a class="button icon-right ion-arrow-down-b button-outline button-positive">距离</a>
+	  <a class="button icon-right ion-arrow-down-b button-outline button-positive">价格</a>
+	  <a class="button icon-right ion-arrow-down-b button-outline button-positive">性别</a>
+	</div>
+	<div class="button-bar" style="width:18%;text-align:center;">
+		<a class="button icon ion-navicon button-outline" name="changeTolist"></a>
+		<a class="button icon ion-gear-a button-positive" name="changeTomap"></a>
+		<!--<button class="button icon ion-gear-a button-outline"></button>-->
+	</div>	
+</div>
+<div name="list" class="list" style="margin-top:85px;min-height: 400px;display:none;">
+    <a class="item item-thumbnail-left" href="#">
+      <img src="img/cover.jpg">
+      <h2>吉他三月通</h2>
+      <p>数万名意大利人走上街头抗议世博会并演变成了相当规模的暴力冲突甚至骚乱。</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#">
+      <img src="img/cover.jpg">
+      <h2>PS入门讲解</h2>
+      <p>这是一个很牛逼的课程</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#">
+      <img src="img/cover.jpg">
+      <h2>吉他入门教程</h2>
+      <p>这是一个很牛逼的课程</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#">
+      <img src="img/cover.jpg">
+      <h2>汉语辅导</h2>
+      <p>这是一个很牛逼的课程</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#">
+      <img src="img/cover.jpg">
+      <h2>日语初级</h2>
+      <p>这是一个很牛逼的课程</p>
+    </a>
+</div>
+
+<div name="map" style="margin-top:85px;min-height:400px;">
+	<div id="mapContainer" style="top:10px;"></div>
+</div>
+
+<div class="bar bar-footer bar-stable" style="position: fixed;">
+	<div class="tabs tabs-icon-top">
+	  <a class="tab-item active">
+	    <i class="icon ion-home"></i>
+	    Home
+	  </a>
+	  <a class="tab-item">
+	    <i class="icon ion-star"></i>
+	    Favorites
+	  </a>
+	  <a class="tab-item">
+	    <i class="icon ion-gear-a"></i>
+	    Settings
+	  </a>
+	</div>
+</div>
+<script type="text/javascript" >
+	var origin = "0,0"; 
+	var origin_region = ""; 
+	var point = new BMap.Point(118.185789, 24.489321); 
+	var map = new BMap.Map("mapContainer"); 
+	map.enableScrollWheelZoom(); 
+	map.centerAndZoom(point, 15); 
+	var marker = new BMap.Marker(point); 
+	map.addOverlay(marker);
+	
+//	var gectrl=new BMap.GeolocationControl( { 
+//	anchor:BMAP_ANCHOR_TOP_LEFT, 
+//	enableAutoLocation: true }); 
+//	map.addControl(gectrl); //添加定位控件 
+	
+	
+	var myCity = new BMap.LocalCity(); 
+	myCity.get(function(result){ origin_region = result.name; });
+	
+	var geolocation = new BMap.Geolocation(); 
+	geolocation.getCurrentPosition(function (r) { 
+	if (this.getStatus() == BMAP_STATUS_SUCCESS ) { 
+	    origin = r.point.lng + "," + r.point.lat; }
+	  
+	});
+</script>
+</body>
+</html>    

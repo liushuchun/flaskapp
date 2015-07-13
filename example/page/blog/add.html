@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/style.css">
+		<style>
+			body {
+				background: #f7f7f7;
+			}
+			.mui-segmented-control {
+				margin: 20px auto;
+				width: 80%;
+			}
+			.uploadbar {
+				margin: 10px auto;
+				height: auto;
+				width: auto;
+			}
+			.uploadbar img {
+				margin: 5px 1.5%;
+				width: 30%;
+				height: 100px;
+			}
+			#uploadBtn {
+				margin: 5px auto;
+				width: 30%;
+			}
+			.form {
+				width: 95%;
+				margin: 10px auto;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+
+			<div id="item1" class="mui-control-content mui-active">
+				<div class="body-title" id="tip">
+					<p>你可以在这里发表课程或求助课程等</p>
+				</div>
+				<div class="form">
+					<div class="mui-input-row" id="context-lable">
+						<textarea id="context" rows="5" placeholder="输入内容"></textarea>
+					</div>
+
+					<span class="uploadbar"></span>
+					<img src="../../images/uploadbg.png" id="uploadBtn">
+					<div class="mui-button-row">
+						<button type="button" class="mui-btn mui-btn-positive mui-btn-block " id="blog-post" onclick="return false;">点击提交</button>
+					</div>
+					<br>
+				</div>
+
+			</div>
+
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/template.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript">
+		var selfWV, mainWV, answerWV, bodyWV,
+			objType = 0;
+		mui.plusReady(function() {
+			//显示当前页面 
+			selfWV = plus.webview.currentWebview();
+			mainWV = plus.webview.currentWebview().opener();
+			bodyWV = plus.webview.getWebviewById('bodyWV');
+			mui('body').on('tap', '#uploadBtn', function() {
+				selectImg();
+			});
+			//点击上传照片
+			mui('body').on('tap', '.imgitem', function() {
+				var _this = $(this);
+				var btnArray = [{
+					title: "删除"
+				}];
+				plus.nativeUI.actionSheet({
+					title: "请选择",
+					cancel: "取消",
+					buttons: btnArray
+				}, function(e) {
+					var index = e.index;
+					switch (index) {
+						case 0:
+							break;
+						case 1:
+							_this.remove();
+							//判断图片个数
+							if ($('.uploadbar img').length >= 9) {
+								document.querySelector('#uploadBtn').style.display = 'none';
+							} else {
+								document.querySelector('#uploadBtn').style.display = 'block';
+							}
+							break;
+					}
+				});
+			});
+			//提交
+			mui('body').on('tap', '#blog-post', function() {
+				var msg, err = false;
+				var context = document.querySelector('#context').value;
+				var photos = [];
+				$('.uploadbar img').each(function(i) {
+					var photo = $(this).attr('data-src');
+					photos.push({
+						'photo': photo
+					});
+				});
+				if ($('.uploadbar img').length == 0 && !context) {
+					alert('请上传图片或者发表文字');
+					return false;
+				}
+				blog.add(context, photos, function(rs) {
+					console.log(context)
+					if (rs.status) {
+						var subWV = plus.webview.getWebviewById('subWV');
+						data = {
+							url: '../blog/show.html?id=' + rs.data,
+							title: '查看内容'
+						}
+						mui.fire(subWV, "openWindow", data);
+					} else {
+						alert('提交失败:' + rs.message);
+					}
+					mui.fire(bodyWV, "myBlog");
+				})
+			});
+		});
+		 //上传头像按钮
+		function selectImg() {
+			var btnArray = [{
+				title: "相册"
+			}, {
+				title: "拍照"
+			}];
+			plus.nativeUI.actionSheet({
+				title: "选择照片",
+				cancel: "取消",
+				buttons: btnArray
+			}, function(e) {
+				var index = e.index;
+				switch (index) {
+					case 0:
+						break;
+					case 1:
+						//相册
+						getGallery();
+						break;
+					case 2:
+						//拍照
+						getImage();
+						break;
+				}
+			});
+		};
+		 // 拍照添加文件
+		function getImage() {
+			var cmr = plus.camera.getCamera();
+			cmr.captureImage(function(p) {
+				plus.io.resolveLocalFileSystemURL(p, function(entry) {
+					var localurl = entry.toLocalURL();
+					appendFile(localurl);
+				});
+			}, function(error) {
+				console.log("照片添加失败: " + error.message);
+			});
+		};
+		 // 从相册添加文件 
+		function getGallery() {
+			plus.gallery.pick(function(e) {
+				if (e.files.length > 9) {
+					alert('最多只能上传9张图,现在是' + e.files.length + '张');
+					return false;
+				}
+				for (var i in e.files) {
+					appendFile(e.files[i]);
+				}
+			}, function(e) {}, {
+				filter: "image",
+				multiple: true
+			});
+		};
+
+		function appendFile(path) {
+			var img = new Image();
+			img.src = path;
+			img.onload = function() {
+				var that = this;
+				//生成比例 
+				var w = that.width;
+				var h = that.height;
+				if (w > 500) {
+					var scale = w / h;
+					w = 500;
+					h = w / scale;
+				}
+				//生成canvas
+				var canvas = document.createElement('canvas');
+				var ctx = canvas.getContext('2d');
+				$(canvas).attr({
+					width: w,
+					height: h
+				});
+				ctx.drawImage(that, 0, 0, w, h);
+				var suffix = path.substr(path.length - 3);
+				suffix = suffix.toLocaleLowerCase();
+				if (suffix != 'png' && suffix != 'jpg' && suffix != 'gif') {
+					alert('只支持gif,jpg,png图片,现在是:' + suffix);
+					return;
+				}
+				if (suffix == 'jpg') {
+					type = 'image/jpeg';
+				} else {
+					type = 'image/png';
+				}
+				var base64 = canvas.toDataURL(type);
+				upload(base64);
+			}
+		};
+		 // 上传文件
+		function upload(src) {
+			var obj = document.querySelector('.uploadbar');
+			if (!src) {
+				plus.nativeUI.alert("没有添加上传文件！");
+				return;
+			}
+			system.upload(src, 'blog', function(rs) {
+				if (rs.status) {
+					var html = obj.innerHTML;
+					html += '<img class="imgitem" src="../../images/1px.png" data-src="' + rs.data + '" style="background: url(' + static_host + rs.data + '!avatar) no-repeat center;background-size:auto 100%; " />';
+					obj.innerHTML = html;
+					//判断图片个数
+					if ($('.uploadbar img').length >= 9) {
+						document.querySelector('#uploadBtn').style.display = 'none';
+					}
+				} else {
+					alert(rs.message);
+				}
+			});
+			return;
+		};
+	</script>
+
+</html>

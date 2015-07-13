@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.css">
+		<style>
+			html,body {
+				background-color: #efeff4;
+			}
+			.title{
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" src="img/cover.jpg">
+						<div class="mui-media-body">
+							JohnzhangScorpio
+    						<p class='mui-ellipsis'>能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
+						</div>
+					</a>
+				</li>
+			</ul>
+		
+		
+		<div class="title">
+			我的课程
+		</div>
+			<ul class="mui-table-view" style="margin-bottom:25px;">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+						民谣吉他入门
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+						初级PHOTOSHOP
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+						标准日本语初级
+					</a>
+				</li>
+			</ul>
+		
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a>
+						设置
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a id="about">
+						关于APP
+					</a>
+				</li>
+			</ul>
+		<button id='confirmBtn' class="mui-btn mui-btn-negative mui-btn-block" style="padding-bottom: 5px;padding-top: 5px;width:90%;margin:25px auto;">退出登录</button>
+	</div>
+	</body>
+	<script src="js/mui.js"></script>
+	<script>
+		mui.init();
+		document.getElementById("about").addEventListener('tap',function () {
+			//获得主页面的webview
+			var main = plus.webview.currentWebview().parent();
+			//触发主页面的gohome事件
+			mui.fire(main,'gohome');
+		});
+		document.getElementById("confirmBtn").addEventListener('tap',function(){
+			  	var btnArray = ['是','否'];
+			  	mui.confirm('确认退出吗？','TeacherNearby',btnArray,function(e){
+//			  		if(e.index==0){
+//			  			info.innerText = '你刚确认MUI是个好框架';
+//			  		}else{
+//			  			info.innerText = 'MUI没有得到你的认可，继续加油'
+//			  		}
+			  	})
+		});
+	</script>
+</html>

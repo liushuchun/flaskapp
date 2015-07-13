@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>课程详情页</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0;" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/ionic.css" />
+    <script type="text/javascript" charset="utf-8" src="js/ionic.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/ionic-angular.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/angular-ui/angular-ui-router.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+  	<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+  	<!--icon css-->
+  	<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" /> 
+  	
+<style type="text/css">
+</style>  
+<script>
+	$(function(){
+		$('#role').click(function(){
+			$('div[name=founder]').toggle();
+		});
+
+	});
+</script>
+   
+</head>
+<body> 
+
+<div class="bar bar-header  bar-positive" style="position: fixed;">
+    <a href="main.html" class="button button-icon icon ion-ios-arrow-left"></a>
+    <h1 class="title">课程信息</h1>
+</div>
+<div class="bar bar-subheader" name="courseinfo" style="height:100px;text-align:center;position: fixed;">
+	<div class="row">
+	  <div class="col col-25" style="height:80px;">
+	  	<img src="img/cover.jpg" style = "width:80px;height:100%">
+	  </div>
+	  <div class="col" style="text-align: left;">
+	  	<h3 style="margin-bottom:0px;">吉他三月通</h3>2015-05-02  上海市普陀区金沙江路
+      	<p>课程评分：★★★☆☆    <a id="role">JohnzhangScorpio</a></p>
+	  </div>
+	</div>	
+</div>
+<div class="list card" style="margin-top:135px;">
+  <div class="item item-avatar" name="founder" style="display:none;">
+    <img src="img/cover.jpg">
+    <h2>JohnzhangScorpio&nbsp;&nbsp;&nbsp;男&nbsp;&nbsp;29</h2>
+    <p>信用：★★★   教学：★★★★★  专业：★★★  </p>
+  </div>
+  <div class="item item-body" name="coursedetail">
+    <img class="full-image" src="img/cover.jpg">
+    <p>
+      《吉他自学三月通》是目前国内最系统、最规范、最实用的有声教材。不论你是一点都不会的初学者还是有一定基础的中级学员或是想进一步深造的高级学员，在这套教材中均可找到适合你的学习内容。
+书名的“三月通”是指用三个月的时间把书中的乐理知识读懂，而弹奏练习则需要更长的时间。书中大量的练习既可用指弹也可用拨片弹，并且都可以在木吉他或电吉他上弹奏。
+    </p>
+    <p>
+      <a href="#" class="subdued">1 喜欢</a>
+      <a href="#" class="subdued">5 评论</a>
+    </p>
+  </div>
+  <div class="item tabs tabs-secondary tabs-icon-left" name="menu">
+    <a class="tab-item" href="#">
+      <i class="icon ion-thumbsup"></i>喜欢
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-chatbox"></i>评论
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-share"></i>分享
+    </a>
+  </div>
+</div>
+</body>
+</html>    

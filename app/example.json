@@ -1,0 +1,80 @@
+host=120.25.237.19
+user:root
+passwd: 1qaz2wsx3eDc
+
+mysql
+usr:root
+pwd： Work1354
+
+
+
+http:host:8080/api/v1.0/productList/
+POST{"user_id":1,
+ "key_word":"吉他",
+ "type":1}
+
+
+ http:127.0.0.1:8080/api/v1.0/editskills/
+ Post{"user_id":1,
+ "skill_ids":[1,2],
+ "type":1,
+ "action":"add"}
+
+ /api/v1.0/register/
+Post{   "name": "test",
+        "email": "1@123.com",
+        "password": "12345",
+        "sex": "male",
+        "longitude":"123.1",
+        "latitude":"24.2",
+    }
+
+http:host:8080/api/v1.0/editprofile/
+
+
+/api/v1.0/addskillitem/
+post{
+	"skill_name":"弹吉他",
+	"skill_intro":"吉他是一种非常开心的乐器"
+}
+
+
+http:host:8080/api/v1.0/editphoto/
+{
+	"user_id":"2",
+	"photo_id":"2",
+}
+
+http:host:8080/api/v1.0/userdetail/
+{
+	"user_id":2
+}
+
+http:host:8080/api/v1.0/productdetail/
+{
+	"product_id":1
+}
+http:host:8080/api/v1.0/addProduct/
+{
+	"title": "家教-小学三年级奥数",
+        "address": "上海普陀区629创智天地",
+        "reg_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+        "start_time": "每周二晚上",
+        "price": 20,
+        "skill_id": "1",
+        "photo_id": "1",
+        "star_level": 4.5,
+        "description": "小学奥数是非常有利于提高小朋友智商的一种好活动哦的那个",
+        "latitude": 121.239,
+        "longitude": 31.2324,
+        "like_num": 0,
+}
+
+http:host:8080/api/v1.0/productList/
+{
+  "user_id":1,
+ "skill_ids":[1,2,3],
+ "type":1,
+ "action":"add"
+}
+
